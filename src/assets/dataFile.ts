@@ -3,5 +3,15 @@ export const auctions:string[] = [
     "ISUZU KYUSHU",
     "JU AICHI",
     "JU FUKUSHIMA",
-    "JU GUNMA"
+    "JU GUNMA",
+    "KCAA FUKUOKA",
+    "MIRIVE OSAKA",
+    "ZIP OSAKA",
+    "KCAA YAMAGUCHI",
+    "MIRIVE AICHI",
+    "MOTA",
+    "USS NAGOYA",
+    "USS OSAKA",
+    "USS SAITAMA",
+    "ZERO CHIBA",
 ]

@@ -5,6 +5,10 @@ import SelectBox from "./components/SelectBox";
 import { auctions } from "./assets/dataFile";
 
 function App() {
+  const handleAuctionSelectionChange = (selected: string[]) => {
+    console.log("Selected:", selected);
+  };
+
   return (
     <section className="bg-gray-100 h-screen overflow-hidden px-6">
       {/* nav bar */}
@@ -78,7 +82,7 @@ function App() {
         <div className="flex gap-4 mt-2">
           <div>
             <p className="font-semibold text-base mb-2">Auction</p>
-            <SelectBox items={auctions}/>
+            <SelectBox items={auctions} onChange={handleAuctionSelectionChange} />
           </div>
         </div>
       </div>
