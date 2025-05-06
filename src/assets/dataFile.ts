@@ -15,3 +15,35 @@ export const auctions:string[] = [
     "USS SAITAMA",
     "ZERO CHIBA",
 ]
+
+export const colors:string[] = [
+    "Black",
+    "White",
+    "Red",
+    "Blue",
+    "Green",
+    "Yellow",
+    "Gray",
+    "Brown",
+    "Pink",
+    "Purple",
+]
+
+export const auctionGrades:string[] = [
+    "99",
+    "5",
+    "4.5",
+    "4",
+    "3.5",
+    "0",
+    "RA",
+    "R"
+]
+
+export const status:string[] = [
+    "Sold",
+    "Not Sold",
+    "Removed",
+    "Sold By Nego",
+    "Cancelled",
+]

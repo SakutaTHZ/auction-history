@@ -2,19 +2,32 @@ import { CgProfile } from "react-icons/cg";
 import "./App.css";
 import { IoArrowBackCircleOutline } from "react-icons/io5";
 import SelectBox from "./components/SelectBox";
-import { auctions } from "./assets/dataFile";
+import { auctionGrades, auctions, colors, status } from "./assets/dataFile";
+import { IoMdCar } from "react-icons/io";
+import { Dropdown } from "primereact/dropdown";
+import { useState } from "react";
+import { BiStar } from "react-icons/bi";
+import StatusBullet from './components/StatusBullet';
 
 function App() {
   const handleAuctionSelectionChange = (selected: string[]) => {
     console.log("Selected:", selected);
   };
 
+  const [selectedOrder, setSelectedOrder] = useState<string>("Date asc");
+  const sortOptions = [
+    { name: "Date asc", value: "asc" },
+    { name: "Date desc", value: "desc" },
+  ];
+
+  const tableColClass = "border-r border-gray-200 px-2 py-1 text-center";
+
   return (
-    <section className="bg-gray-100 h-screen overflow-hidden px-6">
+    <section className="bg-gray-100 h-screen overflow-hidden overflow-y-scroll px-6">
       {/* nav bar */}
-      <nav className="nav w-full flex justify-between items-center py-4 gap-8">
+      <nav className="nav w-full h-fit flex justify-between items-center px-6 py-4 gap-8 fixed top-0 bg-gray-100 inset-0 z-[100]">
         <h1 className="logo font-semibold text-lg text-nowrap">JDM Wheels</h1>
-        <ul className="w-full flex gap-8 items-center">
+        <ul className="w-full flex gap-8 items-center overflow-hidden overflow-x-auto">
           <li>
             <a href="#">Search</a>
           </li>
@@ -34,7 +47,7 @@ function App() {
             <a href="#">My Results</a>
           </li>
           <li>
-            <a href="#" className="bg-amber-200 p-2 px-4 rounded-xl">
+            <a href="#" className="text-yellow-500 font-semibold">
               Qualifying
             </a>
           </li>
@@ -74,17 +87,203 @@ function App() {
       </nav>
 
       {/* content*/}
-      <div className="content w-full bg-white h-fit rounded-2xl p-4">
+      <div className="content w-full bg-white h-fit rounded-2xl p-4 mt-16">
         <div className="flex items-center gap-2">
           <IoArrowBackCircleOutline size={24} />
           <p className="text-lg font-semibold">Auction History</p>
         </div>
         <div className="flex gap-4 mt-2">
-          <div>
-            <p className="font-semibold text-base mb-2">Auction</p>
-            <SelectBox items={auctions} onChange={handleAuctionSelectionChange} />
+          <SelectBox
+            items={auctions}
+            onChange={handleAuctionSelectionChange}
+            allTitle="Any Auction"
+            title="Auction"
+          />
+
+          <SelectBox
+            items={colors}
+            onChange={handleAuctionSelectionChange}
+            allTitle="All Colors"
+            title="Color"
+          />
+
+          <SelectBox
+            items={auctionGrades}
+            onChange={handleAuctionSelectionChange}
+            allTitle="All Grades"
+            title="Grade"
+          />
+
+          <div className="w-fit">
+            <div className="w-fit">
+              <p className="font-semibold text-base mb-2">Registration date</p>
+              <div className="flex gap-2 border border-gray-200 rounded-md p-3">
+                <div>
+                  <p className="font-semibold text-base mb-2">From</p>
+                  <input
+                    type="date"
+                    className="w-[150px] border border-gray-200 rounded-md px-2 py-1"
+                  />
+                </div>
+                <div>
+                  <p className="font-semibold text-base mb-2">To</p>
+                  <input
+                    type="date"
+                    className="w-[150px] border border-gray-200 rounded-md px-2 py-1"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="w-fit mt-2">
+              <p className="font-semibold text-base mb-2">Mileage</p>
+              <div className="flex gap-2 border border-gray-200 rounded-md p-3">
+                <div>
+                  <p className="font-semibold text-base mb-2">From</p>
+                  <input
+                    type="text"
+                    className="w-[150px] border border-gray-200 rounded-md px-2 py-1"
+                  />
+                </div>
+                <div>
+                  <p className="font-semibold text-base mb-2">To</p>
+                  <input
+                    type="text"
+                    className="w-[150px] border border-gray-200 rounded-md px-2 py-1"
+                  />
+                </div>
+              </div>
+            </div>
           </div>
+
+          <SelectBox
+            items={status}
+            onChange={handleAuctionSelectionChange}
+            allTitle="All Status"
+            title="Status"
+          />
         </div>
+      </div>
+
+      {/* filter box */}
+      <div className="filterBox w-full bg-white h-fit rounded-2xl p-4 mt-4 flex items-center justify-between gap-4">
+        <div className="flex gap-2">
+          <IoMdCar size={24} />
+          <span className="bg-gray-100 px-2 font-semibold rounded-md">10</span>
+        </div>
+        <div className="relative w-full">
+          <input
+            type="text"
+            className="border border-gray-300 rounded-md w-full p-3 py-2 pb-1"
+          />
+          <span className="absolute top-0 left-2 text-xs bg-white px-1 -translate-y-1/2 text-gray-500">
+            Field List
+          </span>
+        </div>
+
+        <div className="relative w-[200px]">
+          <Dropdown
+            value={selectedOrder}
+            onChange={(e) => setSelectedOrder(e.value)}
+            options={sortOptions}
+            optionLabel="name"
+            placeholder="Select Order"
+            className="w-full bg-white"
+          />
+          <span className="absolute top-0 left-2 text-xs bg-white px-1 -translate-y-1/2 text-gray-500">
+            Order By
+          </span>
+        </div>
+      </div>
+
+      {/* table */}
+      <div className="content w-full bg-white h-fit rounded-2xl p-4 mt-4">
+        <table className="w-full">
+          <tr className="border-b border-gray-200 bg-gray-50 sticky top-14 z-10">
+            <td className={`font-semibold ` + tableColClass}>
+              <input type="checkbox" />
+            </td>
+            <td className={`font-semibold ` + tableColClass}>Auction Images</td>
+            <td className={`font-semibold ` + tableColClass}>Lot number</td>
+            <td className={`font-semibold ` + tableColClass}>
+              Auction Date/
+              <br />
+              Auction name
+            </td>
+            <td className={`font-semibold ` + tableColClass}>Make</td>
+            <td className={`font-semibold ` + tableColClass}>Model</td>
+            <td className={`font-semibold ` + tableColClass}>Year</td>
+            <td className={`font-semibold ` + tableColClass}>Chassis</td>
+            <td className={`font-semibold ` + tableColClass}>Vehicle <br/> Grade</td>
+            <td className={`font-semibold ` + tableColClass}>Engine CC</td>
+            <td className={`font-semibold ` + tableColClass}>Color</td>
+            <td className={`font-semibold ` + tableColClass}>Mileage</td>
+            <td className={`font-semibold ` + tableColClass}>Auction <br/> Grade</td>
+            <td className={`font-semibold px-2 text-center`}>Status</td>
+          </tr>
+          {/* Loop 20 sample rows */}
+          {Array.from({ length: 20 }, (_, index) => (
+            <tr key={index} className="border-b border-gray-200">
+              <td className={`text-center ` + tableColClass}>
+                <input type="checkbox" />
+              </td>
+              <td className={`text-center ` + tableColClass}>
+                <div className="w-full flex items-center justify-center gap-2">
+                  <div className="w-[128px] grid grid-cols-2 gap-1">
+                    <img
+                      src="https://jdm-images-h8dpgscqbja0azg4.z02.azurefd.net/auction/2025-05-01/250736840_2b1fe6.jpg?preset=BigImage"
+                      alt="Auction"
+                      className="w-full aspect-square object-cover"
+                    />
+                    <img
+                      src="https://jdm-images-h8dpgscqbja0azg4.z02.azurefd.net/auction/2025-05-01/250736841_06ae03.jpg?preset=BigImage"
+                      alt="Auction"
+                      className="w-full aspect-square object-cover"
+                    />
+                    <img
+                      src="https://jdm-images-h8dpgscqbja0azg4.z02.azurefd.net/auction/2025-05-01/250736846_dec087.jpg?preset=BigImage"
+                      alt="Auction"
+                      className="w-full aspect-square object-cover"
+                    />
+                  </div>
+                </div>
+              </td>
+              <td className={`text-center ` + tableColClass}>
+                <span className="font-semibold px-3 py-1 bg-gray-50 rounded-md cursor-pointer">30178</span>
+              </td>
+              <td className={`text-center ` + tableColClass}>
+                <p>30-2-2030</p>
+                <p className="text-gray-400">[<span>11:11</span>]</p>
+                <p className="font-medium">ARAI OYAMA</p>
+              </td>
+              <td className={`text-center ` + tableColClass}>Honda</td>
+              <td className={`text-center ` + tableColClass}>Accord</td>
+              <td className={`text-center ` + tableColClass}>2021</td>
+              <td className={`text-center ` + tableColClass}>CV3-1417713</td>
+              <td className={`text-center ` + tableColClass}>
+                <p className="flex justify-center items-center gap-1"><BiStar/>5</p>  
+              </td>
+              <td className={`text-center ` + tableColClass}>
+                <span>{"2,150"}</span>
+                <span className="ml-2 text-gray-400">cc</span>
+              </td>
+              <td className={`text-center ` + tableColClass}>
+                <div className="w-full flex justify-center items-center gap-1">
+                <span className={`w-4 h-4 rounded-full border bg-white border-gray-200`}></span>
+                  <p>White</p>
+                </div>
+              </td>
+              <td className={`text-center ` + tableColClass}>100,000</td>
+              <td className={`text-center ` + tableColClass}>
+              <p className="flex justify-center items-center gap-1"><BiStar/>5</p>  </td>
+              <td className={`text-center ` + tableColClass}>
+                <div className="flex items-center justify-center gap-2">
+                  <StatusBullet status={"Sold"}/>  
+                </div>
+              </td>
+            </tr>
+          ))}
+        </table>
       </div>
     </section>
   );
