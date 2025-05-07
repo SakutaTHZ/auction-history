@@ -8,6 +8,7 @@ import { Dropdown } from "primereact/dropdown";
 import { useState } from "react";
 import { BiStar } from "react-icons/bi";
 import StatusBullet from './components/StatusBullet';
+import { BsFillStarFill } from "react-icons/bs";
 
 function App() {
   const handleAuctionSelectionChange = (selected: string[]) => {
@@ -21,14 +22,6 @@ function App() {
   ];
 
   const tableColClass = "border-r border-gray-200 px-2 py-1 text-center";
-
-  const status: string = [
-    "Sold",
-    "Not Sold",
-    "Removed",
-    "Sold By Nego",
-    "Cancelled",
-  ];
 
   const getRandomStatus = (): string => {
     const randomstatus = status[Math.floor(Math.random() * status.length)]
@@ -99,13 +92,13 @@ function App() {
         </div>
       </nav>
 
-      {/* content*/}
-      <div className="content w-full bg-white h-fit rounded-2xl p-4 mt-16">
+      {/* filters*/}
+      <div className="content w-full bg-white h-fit rounded-2xl p-4 md:mt-16 mt-24">
         <div className="flex items-center gap-2">
           <IoArrowBackCircleOutline size={24} />
           <p className="text-lg font-semibold">Auction History</p>
         </div>
-        <div className="flex gap-4 mt-2">
+        <div className="flex flex-wrap gap-4 mt-2">
           <SelectBox
             items={auctions}
             onChange={handleAuctionSelectionChange}
@@ -127,22 +120,22 @@ function App() {
             title="Grade"
           />
 
-          <div className="w-fit">
-            <div className="w-fit">
+          <div className="w-full md:w-fit">
+            <div className="w-full md:w-fit">
               <p className="font-semibold text-base mb-2">Registration date</p>
               <div className="flex gap-2 border border-gray-200 rounded-md p-3">
                 <div>
                   <p className="font-semibold text-base mb-2">From</p>
                   <input
-                    type="date"
-                    className="w-[150px] border border-gray-200 rounded-md px-2 py-1"
+                    type="number"
+                    className="w-full md:w-[150px] border border-gray-200 rounded-md px-2 py-1"
                   />
                 </div>
                 <div>
                   <p className="font-semibold text-base mb-2">To</p>
                   <input
-                    type="date"
-                    className="w-[150px] border border-gray-200 rounded-md px-2 py-1"
+                    type="number"
+                    className="w-full md:w-[150px] border border-gray-200 rounded-md px-2 py-1"
                   />
                 </div>
               </div>
@@ -154,15 +147,15 @@ function App() {
                 <div>
                   <p className="font-semibold text-base mb-2">From</p>
                   <input
-                    type="text"
-                    className="w-[150px] border border-gray-200 rounded-md px-2 py-1"
+                    type="number"
+                    className="w-full md:w-[150px] border border-gray-200 rounded-md px-2 py-1"
                   />
                 </div>
                 <div>
                   <p className="font-semibold text-base mb-2">To</p>
                   <input
-                    type="text"
-                    className="w-[150px] border border-gray-200 rounded-md px-2 py-1"
+                    type="number"
+                    className="w-full md:w-[150px] border border-gray-200 rounded-md px-2 py-1"
                   />
                 </div>
               </div>
@@ -179,7 +172,7 @@ function App() {
       </div>
 
       {/* filter box */}
-      <div className="filterBox w-full bg-white h-fit rounded-2xl p-4 mt-4 flex items-center justify-between gap-4">
+      <div className="filterBox w-full bg-white h-fit rounded-2xl p-4 mt-4 flex md:flex-nowrap flex-wrap items-center justify-between gap-4">
         <div className="flex gap-2">
           <IoMdCar size={24} />
           <span className="bg-gray-100 px-2 font-semibold rounded-md">10</span>
@@ -194,7 +187,7 @@ function App() {
           </span>
         </div>
 
-        <div className="relative w-[200px]">
+        <div className="relative w-full md:w-[200px]">
           <Dropdown
             value={selectedOrder}
             onChange={(e) => setSelectedOrder(e.value)}
@@ -210,9 +203,9 @@ function App() {
       </div>
 
       {/* table */}
-      <div className="content w-full bg-white h-fit rounded-2xl p-4 my-4">
+      <div className="content w-full bg-white h-fit rounded-2xl p-4 my-4 overflow-auto">
         <table className="w-full">
-          <tr className="border-b border-gray-200 bg-gray-50 sticky top-14 z-10">
+          <tr className="border-b border-gray-200 bg-gray-50 sticky md:top-14 z-10">
             <td className={`font-semibold ` + tableColClass}>
               <input type="checkbox" />
             </td>
@@ -274,7 +267,7 @@ function App() {
               <td className={`text-center ` + tableColClass}>2021</td>
               <td className={`text-center ` + tableColClass}>CV3-1417713</td>
               <td className={`text-center ` + tableColClass}>
-                <p className="flex justify-center items-center gap-1"><BiStar/>5</p>  
+                <p className="flex justify-center items-center gap-1"><BiStar className="text-yellow-500"/>5</p>  
               </td>
               <td className={`text-center ` + tableColClass}>
                 <span>{"2,150"}</span>
@@ -288,7 +281,7 @@ function App() {
               </td>
               <td className={`text-center ` + tableColClass}>100,000</td>
               <td className={`text-center ` + tableColClass}>
-              <p className="flex justify-center items-center gap-1"><BiStar/>5</p>  </td>
+              <p className="flex justify-center items-center gap-1"><BsFillStarFill className="text-yellow-500"/>5</p>  </td>
               <td className={`text-center ` + tableColClass}>
                 <div className="flex items-center justify-center gap-2">
                   <StatusBullet status={getRandomStatus()}/>  

@@ -40,7 +40,7 @@ const SelectBox = ({
   }, [selectedItems, onChange]);
 
   return (
-    <div>
+    <div className="w-full md:w-fit">
       <p className="h-6 font-semibold text-base mb-2 flex justify-between">
         {title}{" "}
         {selectedItems.length != 0 && (
@@ -49,7 +49,7 @@ const SelectBox = ({
           </span>
         )}
       </p>
-      <div className="border border-gray-200 rounded-md h-[225px] min-w-[250px] overflow-y-auto custom-scrollbar">
+      <div className="border border-gray-200 rounded-md h-[225px] md:min-w-[250px] min-w-full overflow-y-auto custom-scrollbar">
         <div
           className={`row flex items-center justify-between gap-2 p-4 py-2 hover:bg-gray-50 cursor-pointer ${
             allSelected ? "bg-blue-100 hover:bg-blue-200" : ""
