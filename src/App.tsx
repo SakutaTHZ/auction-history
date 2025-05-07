@@ -203,9 +203,9 @@ function App() {
       </div>
 
       {/* table */}
-      <div className="content w-full bg-white h-fit rounded-2xl p-4 my-4 overflow-auto">
+      <div className="content w-full bg-white h-fit rounded-2xl p-4 my-4 overflow-auto md:overflow-visible">
         <table className="w-full">
-          <tr className="border-b border-gray-200 bg-gray-50 sticky md:top-14 z-10">
+          <tr className="border-b shadow-2xs border-gray-200 bg-amber-50 sticky md:top-14 z-10">
             <td className={`font-semibold ` + tableColClass}>
               <input type="checkbox" />
             </td>
