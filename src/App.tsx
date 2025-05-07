@@ -22,6 +22,19 @@ function App() {
 
   const tableColClass = "border-r border-gray-200 px-2 py-1 text-center";
 
+  const status: string = [
+    "Sold",
+    "Not Sold",
+    "Removed",
+    "Sold By Nego",
+    "Cancelled",
+  ];
+
+  const getRandomStatus = (): string => {
+    const randomstatus = status[Math.floor(Math.random() * status.length)]
+    return randomstatus
+  }
+
   return (
     <section className="bg-gray-100 h-screen overflow-hidden overflow-y-scroll px-6">
       {/* nav bar */}
@@ -197,7 +210,7 @@ function App() {
       </div>
 
       {/* table */}
-      <div className="content w-full bg-white h-fit rounded-2xl p-4 mt-4">
+      <div className="content w-full bg-white h-fit rounded-2xl p-4 my-4">
         <table className="w-full">
           <tr className="border-b border-gray-200 bg-gray-50 sticky top-14 z-10">
             <td className={`font-semibold ` + tableColClass}>
@@ -223,7 +236,7 @@ function App() {
           </tr>
           {/* Loop 20 sample rows */}
           {Array.from({ length: 20 }, (_, index) => (
-            <tr key={index} className="border-b border-gray-200">
+            <tr key={index} className="border-b border-gray-200 odd:bg-gray-50 hover:bg-yellow-50">
               <td className={`text-center ` + tableColClass}>
                 <input type="checkbox" />
               </td>
@@ -278,7 +291,7 @@ function App() {
               <p className="flex justify-center items-center gap-1"><BiStar/>5</p>  </td>
               <td className={`text-center ` + tableColClass}>
                 <div className="flex items-center justify-center gap-2">
-                  <StatusBullet status={"Sold"}/>  
+                  <StatusBullet status={getRandomStatus()}/>  
                 </div>
               </td>
             </tr>
