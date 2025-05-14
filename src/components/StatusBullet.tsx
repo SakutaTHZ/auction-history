@@ -8,7 +8,7 @@ const StatusBullet = ({ status }: { status: string }) => {
   };
 
   return (
-    <div className={`flex items-center gap-2 px-2 py-2 rounded-full border ${statusColors[status][1]}`}>
+    <div className={`flex items-center gap-2 px-2 py-1 rounded-full border ${statusColors[status][1]}`}>
       <div className={`w-3 h-3 rounded-full ${statusColors[status][0]}`}></div>
       <p className="text-sm font-medium text-gray-900">{status}</p>
     </div>

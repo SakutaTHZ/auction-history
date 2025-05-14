@@ -2,13 +2,17 @@ import { CgProfile } from "react-icons/cg";
 import "./App.css";
 import { IoArrowBackCircleOutline } from "react-icons/io5";
 import SelectBox from "./components/SelectBox";
-import { auctionGrades, auctions, colors, status } from "./assets/dataFile";
+import {
+  auctionGrades,
+  auctions,
+  colors,
+  status,
+  vehicleGrades,
+} from "./assets/dataFile";
 import { IoMdCar } from "react-icons/io";
 import { Dropdown } from "primereact/dropdown";
 import { useState } from "react";
-import { BiStar } from "react-icons/bi";
-import StatusBullet from './components/StatusBullet';
-import { BsFillStarFill } from "react-icons/bs";
+import DataRow from "./components/DataRow";
 
 function App() {
   const handleAuctionSelectionChange = (selected: string[]) => {
@@ -22,11 +26,6 @@ function App() {
   ];
 
   const tableColClass = "border-r border-gray-200 px-2 py-1 text-center";
-
-  const getRandomStatus = (): string => {
-    const randomstatus = status[Math.floor(Math.random() * status.length)]
-    return randomstatus
-  }
 
   return (
     <section className="bg-gray-100 h-screen overflow-hidden overflow-y-scroll px-6">
@@ -118,6 +117,13 @@ function App() {
             onChange={handleAuctionSelectionChange}
             allTitle="All Grades"
             title="Grade"
+          />
+
+          <SelectBox
+            items={vehicleGrades}
+            onChange={handleAuctionSelectionChange}
+            allTitle="All Grades"
+            title="Vehicle Grade"
           />
 
           <div className="w-full md:w-fit">
@@ -220,74 +226,23 @@ function App() {
             <td className={`font-semibold ` + tableColClass}>Model</td>
             <td className={`font-semibold ` + tableColClass}>Year</td>
             <td className={`font-semibold ` + tableColClass}>Chassis</td>
-            <td className={`font-semibold ` + tableColClass}>Vehicle <br/> Grade</td>
             <td className={`font-semibold ` + tableColClass}>Engine CC</td>
             <td className={`font-semibold ` + tableColClass}>Color</td>
             <td className={`font-semibold ` + tableColClass}>Mileage</td>
-            <td className={`font-semibold ` + tableColClass}>Auction <br/> Grade</td>
+            <td className={`font-semibold ` + tableColClass}>
+              Vehicle <br /> Grade
+            </td>
+            <td className={`font-semibold ` + tableColClass}>
+              Auction <br /> Grade
+            </td>
+            <td className={`font-semibold ` + tableColClass}>
+              Start <br /> Sold/Not Sold
+            </td>
             <td className={`font-semibold px-2 text-center`}>Status</td>
           </tr>
           {/* Loop 20 sample rows */}
           {Array.from({ length: 20 }, (_, index) => (
-            <tr key={index} className="border-b border-gray-200 odd:bg-gray-50 hover:bg-yellow-50">
-              <td className={`text-center ` + tableColClass}>
-                <input type="checkbox" />
-              </td>
-              <td className={`text-center ` + tableColClass}>
-                <div className="w-full flex items-center justify-center gap-2">
-                  <div className="w-[128px] grid grid-cols-2 gap-1">
-                    <img
-                      src="https://jdm-images-h8dpgscqbja0azg4.z02.azurefd.net/auction/2025-05-01/250736840_2b1fe6.jpg?preset=BigImage"
-                      alt="Auction"
-                      className="w-full aspect-square object-cover"
-                    />
-                    <img
-                      src="https://jdm-images-h8dpgscqbja0azg4.z02.azurefd.net/auction/2025-05-01/250736841_06ae03.jpg?preset=BigImage"
-                      alt="Auction"
-                      className="w-full aspect-square object-cover"
-                    />
-                    <img
-                      src="https://jdm-images-h8dpgscqbja0azg4.z02.azurefd.net/auction/2025-05-01/250736846_dec087.jpg?preset=BigImage"
-                      alt="Auction"
-                      className="w-full aspect-square object-cover"
-                    />
-                  </div>
-                </div>
-              </td>
-              <td className={`text-center ` + tableColClass}>
-                <span className="font-semibold px-3 py-1 bg-gray-50 rounded-md cursor-pointer">30178</span>
-              </td>
-              <td className={`text-center ` + tableColClass}>
-                <p>30-2-2030</p>
-                <p className="text-gray-400">[<span>11:11</span>]</p>
-                <p className="font-medium">ARAI OYAMA</p>
-              </td>
-              <td className={`text-center ` + tableColClass}>Honda</td>
-              <td className={`text-center ` + tableColClass}>Accord</td>
-              <td className={`text-center ` + tableColClass}>2021</td>
-              <td className={`text-center ` + tableColClass}>CV3-1417713</td>
-              <td className={`text-center ` + tableColClass}>
-                <p className="flex justify-center items-center gap-1"><BiStar className="text-yellow-500"/>5</p>  
-              </td>
-              <td className={`text-center ` + tableColClass}>
-                <span>{"2,150"}</span>
-                <span className="ml-2 text-gray-400">cc</span>
-              </td>
-              <td className={`text-center ` + tableColClass}>
-                <div className="w-full flex justify-center items-center gap-1">
-                <span className={`w-4 h-4 rounded-full border bg-white border-gray-200`}></span>
-                  <p>White</p>
-                </div>
-              </td>
-              <td className={`text-center ` + tableColClass}>100,000</td>
-              <td className={`text-center ` + tableColClass}>
-              <p className="flex justify-center items-center gap-1"><BsFillStarFill className="text-yellow-500"/>5</p>  </td>
-              <td className={`text-center ` + tableColClass}>
-                <div className="flex items-center justify-center gap-2">
-                  <StatusBullet status={getRandomStatus()}/>  
-                </div>
-              </td>
-            </tr>
+            <DataRow key={index} />
           ))}
         </table>
       </div>

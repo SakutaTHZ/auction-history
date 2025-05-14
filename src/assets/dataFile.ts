@@ -17,16 +17,16 @@ export const auctions:string[] = [
 ]
 
 export const colors:string[] = [
-    "Black",
-    "White",
-    "Red",
-    "Blue",
-    "Green",
-    "Yellow",
-    "Gray",
-    "Brown",
-    "Pink",
-    "Purple",
+    "black",
+    "white",
+    "red",
+    "blue",
+    "green",
+    "yellow",
+    "gray",
+    "brown",
+    "pink",
+    "purple",
 ]
 
 export const auctionGrades:string[] = [
@@ -40,6 +40,18 @@ export const auctionGrades:string[] = [
     "R"
 ]
 
+export const vehicleGrades:string[] = [
+    "ﾍﾞ-ｼｯｸ",
+    "HOME",
+    "ﾎ-ﾑ",
+    "ﾈｽ",
+    "RYUKS",
+    "e:HEV Z",
+    "e:HEV Z PLaY Package",
+    "Z",
+    "S"
+]
+
 export const status:string[] = [
     "Sold",
     "Not Sold",
@@ -47,3 +59,5 @@ export const status:string[] = [
     "Sold By Nego",
     "Cancelled",
 ]
+
+
