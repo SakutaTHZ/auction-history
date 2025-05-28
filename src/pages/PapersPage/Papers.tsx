@@ -1,30 +1,237 @@
 import CNetAdminNav from "../../components/AdminNav/CNetAdminNav";
 import cosmoLogo from "../../assets/CosmoLogo.svg";
-import { BiCar, BiDownload, BiMenu } from "react-icons/bi";
+import { BiCar, BiDownload, BiEdit, BiMenu } from "react-icons/bi";
 import { BsClock } from "react-icons/bs";
-import { CgProfile } from "react-icons/cg";
+import { CgCheckR, CgProfile } from "react-icons/cg";
 import { Dropdown } from "primereact/dropdown";
 import { useState } from "react";
-import { regions, vessels } from "../../assets/dataFile";
+import {
+  auctions,
+  carMakes,
+  carModels,
+  chassisNumbers,
+  customers,
+  regions,
+  vessels,
+  yardname,
+} from "../../assets/dataFile";
 import { Checkbox } from "primereact/checkbox";
-import { MultiSelect } from 'primereact/multiselect';
+import { MultiSelect } from "primereact/multiselect";
 
 const subHamburgerStyle = "text-nowrap p-2 h-full hover:bg-amber-100 text-base";
+const tableColStyle = `px-2 py-2 text-gray-600 border-e border-gray-200 text-left`;
 
-const viewOptions:string[] = [
-    "Papers",
-    "OCR"
-]
-const exportOptions:string[] = [
-    "Papers",
-    "To JFA"
-]
+const viewOptions: string[] = ["Papers", "OCR"];
+const exportOptions: string[] = ["Papers", "To JFA"];
 const extraOptions = [
-  { label: 'Doc not change', value: 'doc_not_change' },
-  { label: 'No ETY', value: 'no_ety' },
-  { label: 'Need Plates', value: 'need_plates' },
-  { label: 'Has Plates', value: 'has_plates' }
+  { label: "Doc not change", value: "doc_not_change" },
+  { label: "No ETY", value: "no_ety" },
+  { label: "Need Plates", value: "need_plates" },
+  { label: "Has Plates", value: "has_plates" },
 ];
+
+function getRandomDateShort() {
+  const months = [
+    "JAN",
+    "FEB",
+    "MAR",
+    "APR",
+    "MAY",
+    "JUN",
+    "JUL",
+    "AUG",
+    "SEP",
+    "OCT",
+    "NOV",
+    "DEC",
+  ];
+
+  const day = Math.floor(Math.random() * 28) + 1; // Keep it safe for all months
+  const monthIndex = Math.floor(Math.random() * 12);
+
+  return `${day.toString().padStart(2, "0")} ${months[monthIndex]}`;
+}
+
+function PapersTableRow({ index }: { index: number }) {
+  return (
+    <tr className="border-b border-gray-200 even:bg-gray-50 hover:bg-[#F8F4ED80]">
+      <td className={`${tableColStyle}`}>
+        <div className="flex flex-col justify-center items-center">
+          <p>{index}</p>
+          <button>
+            <BiEdit className="text-gray-500" />
+          </button>
+        </div>
+      </td>
+      <td className={`${tableColStyle}`}>
+        <div className="flex flex-col justify-center items-start">
+          <p className="text-black text-left">{getRandomDateShort()}</p>
+        </div>
+      </td>
+      <td className={`${tableColStyle}`}>
+        <div className="flex flex-col justify-center items-start">
+          <p className="text-black font-medium text-left">
+            {auctions[Math.floor(Math.random() * (auctions.length - 1))]}
+          </p>
+          <p>
+            {Math.floor(Math.random() * 10000)}/
+            {Math.floor(Math.random() * 10000)}
+          </p>
+        </div>
+      </td>
+      <td className={`${tableColStyle}`}>
+        <div className="flex flex-col justify-center items-start">
+          <p className="text-black text-left">
+            {customers[Math.floor(Math.random() * (customers.length - 1))]}
+          </p>
+          <p>{regions[Math.floor(Math.random() * (regions.length - 1)) + 1]}</p>
+        </div>
+      </td>
+      <td className={`${tableColStyle}`}>
+        <div className="flex flex-col justify-center items-start">
+          <p className="text-black text-left">
+            {carMakes[Math.floor(Math.random() * (carMakes.length - 1))]}
+          </p>
+          <p>{carModels[Math.floor(Math.random() * (carModels.length - 1))]}</p>
+        </div>
+      </td>
+      <td className={`${tableColStyle}`}>
+        <div className="flex flex-col justify-center items-start">
+          <p className="text-black text-left">
+            {
+              chassisNumbers[
+                Math.floor(Math.random() * (chassisNumbers.length - 1))
+              ]
+            }
+          </p>
+        </div>
+      </td>
+      <td className={`${tableColStyle}`}>
+        <div className="flex flex-col justify-center items-start">
+          <p className="text-black text-left">
+            {Math.floor(Math.random() * 10000)}
+          </p>
+          <p>p</p>
+        </div>
+      </td>
+      <td className={`${tableColStyle}`}>
+        <div className="flex flex-col justify-center items-start">
+          <p className="text-black text-left text-nowrap">登録</p>
+        </div>
+      </td>
+      <td className={`${tableColStyle}`}>
+        <div className="flex flex-col justify-center items-start">
+          <p className="text-black text-left">-</p>
+        </div>
+      </td>
+      <td className={`${tableColStyle}`}>
+        <div className="flex flex-col justify-center items-start">
+          <p className="text-black text-left text-nowrap">{getRandomDateShort()}</p>
+        </div>
+      </td>
+      <td className={`${tableColStyle}`}>
+        <div className="flex flex-col justify-center items-start">
+          <p className="text-black text-left">登録</p>
+          <p className="text-black text-left text-nowrap">{getRandomDateShort()}</p>
+        </div>
+      </td>
+      <td className={`${tableColStyle}`}>
+        <div className="flex flex-col justify-center items-start">
+          <p className="text-black text-left">登録</p>
+          <p className="text-black text-left text-nowrap">{getRandomDateShort()}</p>
+        </div>
+      </td>
+      <td className={`${tableColStyle}`}>
+        <div className="flex flex-col justify-center items-start">
+          <p className="text-black text-left text-nowrap">{getRandomDateShort()}</p>
+        </div>
+      </td>
+      <td className={`${tableColStyle}`}>
+        <div className="flex flex-col justify-center items-start">
+          <p className="text-black text-left text-nowrap">{getRandomDateShort()}</p>
+          <p className="text-black text-left text-nowrap">(平成22年)</p>
+        </div>
+      </td>
+      <td className={`${tableColStyle}`}>
+        <div className="flex flex-col justify-center items-start">
+          <p className="text-black text-left">
+            {Math.floor(Math.random() * 1000)} x{" "}
+            {Math.floor(Math.random() * 1000)} x{" "}
+            {Math.floor(Math.random() * 1000)}
+          </p>
+        </div>
+      </td>
+      <td className={`${tableColStyle}`}>
+        <div className="flex flex-col justify-center items-start">
+          <p className="text-black text-left">
+            {Math.floor(Math.random() * 10000)}
+          </p>
+        </div>
+      </td>
+      <td className={`${tableColStyle}`}>
+        <div className="flex flex-col justify-center items-center">
+          {Math.random() < 0.5 && <CgCheckR />}
+        </div>
+      </td>
+      <td className={`${tableColStyle}`}>
+        <div className="flex flex-col justify-center items-start">
+          <p className="text-black text-left">
+            {Math.floor(Math.random() * 100000)}-
+            {Math.floor(Math.random() * 1000)}
+          </p>
+        </div>
+      </td>
+      <td className={`${tableColStyle}`}>
+        <div className="flex flex-col justify-center items-start">
+          <p className="text-black text-left">
+            {Math.floor(Math.random() * 1000000).toLocaleString()}
+          </p>
+          <p>km</p>
+        </div>
+      </td>
+      <td className={`${tableColStyle}`}>
+        <div className="flex flex-col justify-center items-start">
+          {Math.random() < 0.5 && "メンテ、取、Rキー>>Sent to yard(2025/02/27)"}
+        </div>
+      </td>
+      <td className={`${tableColStyle}`}>
+        <div className="flex flex-col justify-center items-start">
+          {Math.random() < 0.5 && "★抹消ストップ★"}
+        </div>
+      </td>
+      <td className={`${tableColStyle}`}>
+        <div className="flex flex-col justify-center items-start">
+          <p className="text-black text-left">JFA</p>
+        </div>
+      </td>
+      <td className={`${tableColStyle}`}>
+        <div className="flex flex-col justify-center items-start">
+          <p>{getRandomDateShort()}</p>
+          <p className="text-black text-left w-fit">
+            {yardname[Math.floor(Math.random() * (yardname.length - 1)) + 1]}
+          </p>
+        </div>
+      </td>
+      <td className={`${tableColStyle}`}>
+        <div className="flex flex-col justify-center items-start">
+          <p className="text-black text-left w-fit">
+            {vessels[Math.floor(Math.random() * (vessels.length - 1)) + 1]
+              .split("]")
+              .pop()
+              ?.trim()}
+          </p>
+          <p>V.0002A</p>
+        </div>
+      </td>
+      <td className={`${tableColStyle}`}>
+        <div className="flex flex-col justify-center items-start">
+          <p className="text-nowrap">{getRandomDateShort()}</p>
+          <p className="text-black text-left w-fit">HAK</p>
+        </div>
+      </td>
+    </tr>
+  );
+}
 
 function Papers() {
   const [selectedRegion, setSelectedRegion] = useState(regions[0]);
@@ -32,12 +239,16 @@ function Papers() {
   const [selecteedVessel, setSelectedVessel] = useState(vessels[0]);
   const [vesselCheck, setVesselCheck] = useState(false);
 
-    const [selectedViewOption,setSelectedViewOption] = useState(viewOptions[0]) 
+  const [selectedViewOption, setSelectedViewOption] = useState(viewOptions[0]);
 
-    const [selectedExtraOptions, setSelectedExtraOptions] = useState<string[]>([])
-    const [textFilter,setTextFilter] = useState("")
+  const [selectedExtraOptions, setSelectedExtraOptions] = useState<string[]>(
+    []
+  );
+  const [textFilter, setTextFilter] = useState("");
 
-    const  [selectedExportOption, setSelecteedExportOption] = useState(exportOptions[0])
+  const [selectedExportOption, setSelecteedExportOption] = useState(
+    exportOptions[0]
+  );
 
   return (
     <>
@@ -134,10 +345,15 @@ function Papers() {
       </div>
 
       {/* Filters */}
-      <div className="py-3 px-10 flex gap-2 items-end w-full">
+      <div className="py-4 px-10 flex gap-2 items-end w-full">
         {/* Regions */}
         <div className="flex flex-col gap-2 w-fit">
-          <label htmlFor="regions" className="text-nowrap text-sm text-gray-600">Regions</label>
+          <label
+            htmlFor="regions"
+            className="text-nowrap text-sm text-gray-600"
+          >
+            Regions
+          </label>
 
           <div className="flex items-center gap-1">
             <Dropdown
@@ -152,7 +368,12 @@ function Papers() {
         </div>
         {/* Vessel */}
         <div className="flex flex-col gap-2 w-fit">
-          <label htmlFor="regions" className="text-nowrap text-sm text-gray-600">Vessel</label>
+          <label
+            htmlFor="regions"
+            className="text-nowrap text-sm text-gray-600"
+          >
+            Vessel
+          </label>
           <div className="flex items-center gap-1">
             <Dropdown
               value={selecteedVessel}
@@ -171,7 +392,12 @@ function Papers() {
 
         {/* View Option */}
         <div className="flex flex-col gap-2 w-fit">
-          <label htmlFor="regions" className="text-nowrap text-sm text-gray-600">View Option</label>
+          <label
+            htmlFor="regions"
+            className="text-nowrap text-sm text-gray-600"
+          >
+            View Option
+          </label>
           <div className="flex items-center gap-1">
             <Dropdown
               value={selectedViewOption}
@@ -186,28 +412,43 @@ function Papers() {
 
         {/* Extra Options */}
         <div className="flex flex-col gap-2 w-fit">
-          <label htmlFor="regions" className="text-nowrap text-sm text-gray-600">Extra Options</label>
+          <label
+            htmlFor="regions"
+            className="text-nowrap text-sm text-gray-600"
+          >
+            Extra Options
+          </label>
           <div className="flex items-center gap-1">
             <MultiSelect
-                value={selectedExtraOptions}
-                onChange={(e) => setSelectedExtraOptions(e.value)}
-                options={extraOptions}
-                optionLabel="label"
-                placeholder="Select Extra Options"
-                 maxSelectedLabels={1}
-                className="w-full md:w-20rem custom-dropdown rounded-md"
-                />
+              value={selectedExtraOptions}
+              onChange={(e) => setSelectedExtraOptions(e.value)}
+              options={extraOptions}
+              optionLabel="label"
+              placeholder="Select Extra Options"
+              maxSelectedLabels={1}
+              className="w-full md:w-20rem custom-dropdown rounded-md"
+            />
           </div>
         </div>
 
         {/* Free Text Filter */}
         <div className="flex w-full h-full justify-end">
-          <input placeholder="Free Text Filter" className="border border-gray-300 rounded-md h-9 px-2 w-full outline-0" value={textFilter} onChange={(e)=> setTextFilter(e.target.value)}/>
+          <input
+            placeholder="Free Text Filter"
+            className="border border-gray-300 rounded-md h-9 px-2 w-full outline-0"
+            value={textFilter}
+            onChange={(e) => setTextFilter(e.target.value)}
+          />
         </div>
 
         {/* Export */}
         <div className="flex flex-col gap-2 w-fit">
-          <label htmlFor="regions" className="text-nowrap text-sm text-gray-600">Export</label>
+          <label
+            htmlFor="regions"
+            className="text-nowrap text-sm text-gray-600"
+          >
+            Export
+          </label>
           <div className="flex items-center gap-1">
             <Dropdown
               value={selectedExportOption}
@@ -218,10 +459,94 @@ function Papers() {
               className="w-full md:w-14rem custom-dropdown"
             />
             <button className="bg-blue-500 p-2 rounded-md text-white">
-                <BiDownload size={16}/>
+              <BiDownload size={16} />
             </button>
           </div>
         </div>
+      </div>
+
+      {/* Table */}
+      <div className="tableContainer w-full overflow-auto">
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="bg-[#F8F4ED]">
+              <th className={`font-semibold ${tableColStyle}`}>#</th>
+              <th className={`font-semibold ${tableColStyle}`}>
+                Bought
+                <br />
+                Date
+              </th>
+              <th className={`font-semibold ${tableColStyle}`}>
+                Auction/
+                <br />
+                Lot No.
+              </th>
+              <th className={`font-semibold ${tableColStyle}`}>
+                Customer/
+                <br />
+                Region
+              </th>
+              <th className={`font-semibold ${tableColStyle}`}>
+                Make/
+                <br />
+                Model
+              </th>
+              <th className={`font-semibold ${tableColStyle}`}>Chassis</th>
+              <th className={`font-semibold ${tableColStyle}`}>CC</th>
+              <th className={`font-semibold ${tableColStyle}`}>Fax</th>
+              <th className={`font-semibold ${tableColStyle}`}>
+                Sent
+                <br />
+                Date
+              </th>
+              <th className={`font-semibold ${tableColStyle}`}>
+                P<br />
+                Date
+              </th>
+              <th className={`font-semibold ${tableColStyle}`}>
+                Original
+                <br />
+                /Date
+              </th>
+              <th className={`font-semibold ${tableColStyle}`}>
+                Change To/
+                <br />
+                /Date
+              </th>
+              <th className={`font-semibold ${tableColStyle}`}>
+                Export
+                <br />
+                Date
+              </th>
+              <th className={`font-semibold ${tableColStyle}`}>Month</th>
+              <th className={`font-semibold ${tableColStyle}`}>
+                Vehicle Format
+                <br />
+                (LxWxH)
+              </th>
+              <th className={`font-semibold ${tableColStyle}`}>Weight</th>
+              <th className={`font-semibold ${tableColStyle}`}>Locked</th>
+              <th className={`font-semibold ${tableColStyle}`}>TDN</th>
+              <th className={`font-semibold ${tableColStyle}`}>
+                Reg
+                <br />
+                Km
+              </th>
+              <th className={`font-semibold ${tableColStyle}`}>Accessories</th>
+              <th className={`font-semibold ${tableColStyle}`}>Comment</th>
+              <th className={`font-semibold ${tableColStyle}`}>Transporter</th>
+              <th className={`font-semibold ${tableColStyle}`}>ETY Yard</th>
+              <th className={`font-semibold ${tableColStyle}`}>Vessel</th>
+              <th className={`font-semibold ${tableColStyle}`}>ETD Port</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {[...Array(20)].map((_, i) => (
+              <PapersTableRow key={i} index={i + 1} />
+            ))}
+          </tbody>
+        </table>
       </div>
     </>
   );
