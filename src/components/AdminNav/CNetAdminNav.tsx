@@ -1,5 +1,4 @@
-import { NavLink } from "react-router-dom"; // Import NavLink
-import CosmoLogo from "../../assets/CosmoLogo.svg";
+import { NavLink } from "react-router-dom";
 import JapanFlag from "../../assets/JPFlag.png";
 import ProfileDropDown from "./ProfileDropDown";
 import { useState } from "react";
@@ -38,7 +37,6 @@ const CNetAdminNav: React.FC<CNetAdminNavProps> = ({
       >
         {/* Logo and Nav links */}
         <div className="flex items-center justify-between md:justify-normal w-full md:w-auto">
-          <img className="h-9" src={CosmoLogo} alt="logo" />
 
           {/* Hamburger Menu for Mobile */}
           <button
@@ -53,7 +51,7 @@ const CNetAdminNav: React.FC<CNetAdminNavProps> = ({
         <ul
           className={`${
             isMenuOpen ? "flex" : "hidden"
-          } pl-8 py-4 md:py-0 md:flex flex-col md:flex-row items-center gap-4 w-full md:w-full`}
+          } py-4 md:py-0 md:flex flex-col md:flex-row items-center gap-4 w-full md:w-full`}
         >
           <li>
             <NavLink
