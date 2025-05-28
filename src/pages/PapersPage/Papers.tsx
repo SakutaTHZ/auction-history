@@ -52,183 +52,230 @@ function getRandomDateShort() {
   return `${day.toString().padStart(2, "0")} ${months[monthIndex]}`;
 }
 
-function PapersTableRow({ index }: { index: number }) {
+const generateRandomData = () => ({
+  boughtDate: getRandomDateShort(),
+  auctionLot: `${
+    auctions[Math.floor(Math.random() * auctions.length)]
+  } / ${Math.floor(Math.random() * 10000)}`,
+  customer: customers[Math.floor(Math.random() * customers.length)],
+  region: regions[Math.floor(Math.random() * regions.length)],
+  make: carMakes[Math.floor(Math.random() * carMakes.length)],
+  model: carModels[Math.floor(Math.random() * carModels.length)],
+  chassis: chassisNumbers[Math.floor(Math.random() * chassisNumbers.length)],
+  cc: `${Math.floor(Math.random() * 3000)}`,
+  fax: Math.random() < 0.5 ? "Sent" : "-",
+  sentDate: getRandomDateShort(),
+  pDate: getRandomDateShort(),
+  originalDate: getRandomDateShort(),
+  changeToDate: getRandomDateShort(),
+  exportDate: getRandomDateShort(),
+  month: `${Math.floor(Math.random() * 12) + 1}月`,
+  vehicleFormat: `${Math.floor(Math.random() * 1000)} x ${Math.floor(
+    Math.random() * 1000
+  )} x ${Math.floor(Math.random() * 1000)}`,
+  weight: `${Math.floor(Math.random() * 2000)}kg`,
+  locked: Math.random() < 0.5,
+  tdn: `${Math.floor(Math.random() * 10000)}`,
+  regKm: `${Math.floor(Math.random() * 1000000).toLocaleString()}`,
+  accessories:
+    Math.random() < 0.5 ? "メンテ、取、Rキー>>Sent to yard(2025/02/27)" : "",
+  comment: Math.random() < 0.5 ? "★抹消ストップ★" : "",
+  transporter: "JFA",
+  etyYard: yardname[Math.floor(Math.random() * yardname.length)],
+  vessel: (
+    vessels[Math.floor(Math.random() * vessels.length)].split("]").pop() ?? ""
+  ).trim(),
+  etdPort: "HAK",
+});
+
+type PapersTableRowData = {
+  boughtDate: string;
+  auctionLot: string;
+  customer: string;
+  region: string;
+  make: string;
+  model: string;
+  chassis: string;
+  cc: string;
+  fax: string;
+  sentDate: string;
+  pDate: string;
+  originalDate: string;
+  changeToDate: string;
+  exportDate: string;
+  month: string;
+  vehicleFormat: string;
+  weight: string;
+  locked: boolean;
+  tdn: string;
+  regKm: string;
+  accessories: string;
+  comment: string;
+  transporter: string;
+  etyYard: string;
+  vessel: string;
+  etdPort: string;
+};
+
+interface PapersTableRowProps {
+  index: number;
+  initialData: PapersTableRowData;
+  tableColStyle: string;
+}
+
+function PapersTableRow({
+  index,
+  initialData,
+  tableColStyle,
+}: PapersTableRowProps) {
+  // States for all your data columns, initialized from props
+  const [boughtDate, setBoughtDate] = useState(initialData.boughtDate);
+  const [auctionLot, setAuctionLot] = useState(initialData.auctionLot);
+  const [customer, setCustomer] = useState(initialData.customer);
+  const [region, setRegion] = useState(initialData.region);
+  const [make, setMake] = useState(initialData.make);
+  const [model, setModel] = useState(initialData.model);
+  const [chassis, setChassis] = useState(initialData.chassis);
+  const [cc, setCc] = useState(initialData.cc);
+  const [fax, setFax] = useState(initialData.fax);
+  const [sentDate, setSentDate] = useState(initialData.sentDate);
+  const [pDate, setPDate] = useState(initialData.pDate);
+  const [originalDate, setOriginalDate] = useState(initialData.originalDate);
+  const [changeToDate, setChangeToDate] = useState(initialData.changeToDate);
+  const [exportDate, setExportDate] = useState(initialData.exportDate);
+  const [month, setMonth] = useState(initialData.month);
+  const [vehicleFormat, setVehicleFormat] = useState(initialData.vehicleFormat);
+  const [weight, setWeight] = useState(initialData.weight);
+  const [locked, setLocked] = useState(initialData.locked);
+  const [tdn, setTdn] = useState(initialData.tdn);
+  const [regKm, setRegKm] = useState(initialData.regKm);
+  const [accessories, setAccessories] = useState(initialData.accessories);
+  const [comment, setComment] = useState(initialData.comment);
+  const [transporter, setTransporter] = useState(initialData.transporter);
+  const [etyYard, setEtyYard] = useState(initialData.etyYard);
+  const [vessel, setVessel] = useState(initialData.vessel);
+  const [etdPort, setEtdPort] = useState(initialData.etdPort);
+
+  const [isEditing, setIsEditing] = useState(false);
+
+  // Helper to render input or text based on edit mode
+  const renderCell = <T extends string>(
+    value: T,
+    setValue: React.Dispatch<React.SetStateAction<T>>,
+    inputProps = {}
+  ) =>
+    isEditing ? (
+      <input
+        type="text"
+        value={value}
+        onChange={(e) => setValue(e.target.value as T)}
+        className="border w-full py-0.5 rounded border-gray-200 bg-white"
+        {...inputProps}
+      />
+    ) : (
+      <p>{value}</p>
+    );
+
+  // Special rendering for Locked column (boolean checkmark)
+  const renderLocked = () =>
+    isEditing ? (
+      <input
+        type="checkbox"
+        checked={locked}
+        onChange={(e) => setLocked(e.target.checked)}
+      />
+    ) : locked ? (
+      <CgCheckR className="text-green-600" />
+    ) : (
+      <></>
+    );
+
   return (
     <tr className="border-b border-gray-200 even:bg-gray-50 hover:bg-[#F8F4ED80]">
-      <td className={`${tableColStyle}`}>
-        <div className="flex flex-col justify-center items-center">
-          <p>{index}</p>
-          <button>
-            <BiEdit className="text-gray-500" />
+      <td className={`${tableColStyle} text-center`}>
+        <div className="flex flex-col items-center justify-center gap-2">
+          {index}
+          <button
+            className="text-gray-600 hover:text-blue-800 font-semibold"
+            onClick={() => setIsEditing(!isEditing)}
+            aria-label={isEditing ? "Save row data" : "Edit row data"}
+          >
+            {isEditing ? "Save" : <BiEdit size={16}/>}
           </button>
         </div>
       </td>
+
       <td className={`${tableColStyle}`}>
-        <div className="flex flex-col justify-center items-start">
-          <p className="text-black text-left">{getRandomDateShort()}</p>
-        </div>
+        {renderCell(boughtDate, setBoughtDate)}
       </td>
+
       <td className={`${tableColStyle}`}>
-        <div className="flex flex-col justify-center items-start">
-          <p className="text-black font-medium text-left">
-            {auctions[Math.floor(Math.random() * (auctions.length - 1))]}
-          </p>
-          <p>
-            {Math.floor(Math.random() * 10000)}/
-            {Math.floor(Math.random() * 10000)}
-          </p>
-        </div>
+        {renderCell(auctionLot, setAuctionLot)}
       </td>
+
       <td className={`${tableColStyle}`}>
-        <div className="flex flex-col justify-center items-start">
-          <p className="text-black text-left">
-            {customers[Math.floor(Math.random() * (customers.length - 1))]}
-          </p>
-          <p>{regions[Math.floor(Math.random() * (regions.length - 1)) + 1]}</p>
-        </div>
+        {renderCell(customer, setCustomer)}
+        {renderCell(region, setRegion)}
       </td>
+
       <td className={`${tableColStyle}`}>
-        <div className="flex flex-col justify-center items-start">
-          <p className="text-black text-left">
-            {carMakes[Math.floor(Math.random() * (carMakes.length - 1))]}
-          </p>
-          <p>{carModels[Math.floor(Math.random() * (carModels.length - 1))]}</p>
-        </div>
+        {renderCell(make, setMake)}
+        {renderCell(model, setModel)}
       </td>
+
+      <td className={`${tableColStyle}`}>{renderCell(chassis, setChassis)}</td>
+
+      <td className={`${tableColStyle}`}>{renderCell(cc, setCc)}</td>
+
+      <td className={`${tableColStyle}`}>{renderCell(fax, setFax)}</td>
+
       <td className={`${tableColStyle}`}>
-        <div className="flex flex-col justify-center items-start">
-          <p className="text-black text-left">
-            {
-              chassisNumbers[
-                Math.floor(Math.random() * (chassisNumbers.length - 1))
-              ]
-            }
-          </p>
-        </div>
+        {renderCell(sentDate, setSentDate)}
       </td>
+
+      <td className={`${tableColStyle}`}>{renderCell(pDate, setPDate)}</td>
+
       <td className={`${tableColStyle}`}>
-        <div className="flex flex-col justify-center items-start">
-          <p className="text-black text-left">
-            {Math.floor(Math.random() * 10000)}
-          </p>
-          <p>p</p>
-        </div>
+        {renderCell(originalDate, setOriginalDate)}
       </td>
+
       <td className={`${tableColStyle}`}>
-        <div className="flex flex-col justify-center items-start">
-          <p className="text-black text-left text-nowrap">登録</p>
-        </div>
+        {renderCell(changeToDate, setChangeToDate)}
       </td>
+
       <td className={`${tableColStyle}`}>
-        <div className="flex flex-col justify-center items-start">
-          <p className="text-black text-left">-</p>
-        </div>
+        {renderCell(exportDate, setExportDate)}
       </td>
+
+      <td className={`${tableColStyle}`}>{renderCell(month, setMonth)}</td>
+
       <td className={`${tableColStyle}`}>
-        <div className="flex flex-col justify-center items-start">
-          <p className="text-black text-left text-nowrap">{getRandomDateShort()}</p>
-        </div>
+        {renderCell(vehicleFormat, setVehicleFormat)}
       </td>
+
+      <td className={`${tableColStyle}`}>{renderCell(weight, setWeight)}</td>
+
+      <td className={`${tableColStyle} text-center`}>{renderLocked()}</td>
+
+      <td className={`${tableColStyle}`}>{renderCell(tdn, setTdn)}</td>
+
+      <td className={`${tableColStyle}`}>{renderCell(regKm, setRegKm)}</td>
+
       <td className={`${tableColStyle}`}>
-        <div className="flex flex-col justify-center items-start">
-          <p className="text-black text-left">登録</p>
-          <p className="text-black text-left text-nowrap">{getRandomDateShort()}</p>
-        </div>
+        {renderCell(accessories, setAccessories)}
       </td>
+
+      <td className={`${tableColStyle}`}>{renderCell(comment, setComment)}</td>
+
       <td className={`${tableColStyle}`}>
-        <div className="flex flex-col justify-center items-start">
-          <p className="text-black text-left">登録</p>
-          <p className="text-black text-left text-nowrap">{getRandomDateShort()}</p>
-        </div>
+        {renderCell(transporter, setTransporter)}
       </td>
-      <td className={`${tableColStyle}`}>
-        <div className="flex flex-col justify-center items-start">
-          <p className="text-black text-left text-nowrap">{getRandomDateShort()}</p>
-        </div>
-      </td>
-      <td className={`${tableColStyle}`}>
-        <div className="flex flex-col justify-center items-start">
-          <p className="text-black text-left text-nowrap">{getRandomDateShort()}</p>
-          <p className="text-black text-left text-nowrap">(平成22年)</p>
-        </div>
-      </td>
-      <td className={`${tableColStyle}`}>
-        <div className="flex flex-col justify-center items-start">
-          <p className="text-black text-left">
-            {Math.floor(Math.random() * 1000)} x{" "}
-            {Math.floor(Math.random() * 1000)} x{" "}
-            {Math.floor(Math.random() * 1000)}
-          </p>
-        </div>
-      </td>
-      <td className={`${tableColStyle}`}>
-        <div className="flex flex-col justify-center items-start">
-          <p className="text-black text-left">
-            {Math.floor(Math.random() * 10000)}
-          </p>
-        </div>
-      </td>
-      <td className={`${tableColStyle}`}>
-        <div className="flex flex-col justify-center items-center">
-          {Math.random() < 0.5 && <CgCheckR />}
-        </div>
-      </td>
-      <td className={`${tableColStyle}`}>
-        <div className="flex flex-col justify-center items-start">
-          <p className="text-black text-left">
-            {Math.floor(Math.random() * 100000)}-
-            {Math.floor(Math.random() * 1000)}
-          </p>
-        </div>
-      </td>
-      <td className={`${tableColStyle}`}>
-        <div className="flex flex-col justify-center items-start">
-          <p className="text-black text-left">
-            {Math.floor(Math.random() * 1000000).toLocaleString()}
-          </p>
-          <p>km</p>
-        </div>
-      </td>
-      <td className={`${tableColStyle}`}>
-        <div className="flex flex-col justify-center items-start">
-          {Math.random() < 0.5 && "メンテ、取、Rキー>>Sent to yard(2025/02/27)"}
-        </div>
-      </td>
-      <td className={`${tableColStyle}`}>
-        <div className="flex flex-col justify-center items-start">
-          {Math.random() < 0.5 && "★抹消ストップ★"}
-        </div>
-      </td>
-      <td className={`${tableColStyle}`}>
-        <div className="flex flex-col justify-center items-start">
-          <p className="text-black text-left">JFA</p>
-        </div>
-      </td>
-      <td className={`${tableColStyle}`}>
-        <div className="flex flex-col justify-center items-start">
-          <p>{getRandomDateShort()}</p>
-          <p className="text-black text-left w-fit">
-            {yardname[Math.floor(Math.random() * (yardname.length - 1)) + 1]}
-          </p>
-        </div>
-      </td>
-      <td className={`${tableColStyle}`}>
-        <div className="flex flex-col justify-center items-start">
-          <p className="text-black text-left w-fit">
-            {vessels[Math.floor(Math.random() * (vessels.length - 1)) + 1]
-              .split("]")
-              .pop()
-              ?.trim()}
-          </p>
-          <p>V.0002A</p>
-        </div>
-      </td>
-      <td className={`${tableColStyle}`}>
-        <div className="flex flex-col justify-center items-start">
-          <p className="text-nowrap">{getRandomDateShort()}</p>
-          <p className="text-black text-left w-fit">HAK</p>
-        </div>
-      </td>
+
+      <td className={`${tableColStyle}`}>{renderCell(etyYard, setEtyYard)}</td>
+
+      <td className={`${tableColStyle}`}>{renderCell(vessel, setVessel)}</td>
+
+      <td className={`${tableColStyle}`}>{renderCell(etdPort, setEtdPort)}</td>
     </tr>
   );
 }
@@ -543,7 +590,12 @@ function Papers() {
 
           <tbody>
             {[...Array(20)].map((_, i) => (
-              <PapersTableRow key={i} index={i + 1} />
+              <PapersTableRow
+                key={i}
+                index={i + 1}
+                initialData={generateRandomData()}
+                tableColStyle="px-2 py-1 text-sm" // example style, use your actual class
+              />
             ))}
           </tbody>
         </table>
