@@ -11,15 +11,17 @@ import {
   carModels,
   chassisNumbers,
   customers,
+  faxLabels,
   regions,
   vessels,
   yardname,
 } from "../../assets/dataFile";
 import { Checkbox } from "primereact/checkbox";
 import { MultiSelect } from "primereact/multiselect";
+import { Calendar } from "primereact/calendar";
 
 const subHamburgerStyle = "text-nowrap p-2 h-full hover:bg-amber-100 text-base";
-const tableColStyle = `px-2 py-2 text-gray-600 border-e border-gray-200 text-left`;
+const tableColStyle = `px-1 py-2 text-gray-700 border-e border-gray-100 text-left text-sm`;
 
 const viewOptions: string[] = ["Papers", "OCR"];
 const exportOptions: string[] = ["Papers", "To JFA"];
@@ -30,7 +32,35 @@ const extraOptions = [
   { label: "Has Plates", value: "has_plates" },
 ];
 
-function getRandomDateShort() {
+function getRandomDate(): Date {
+  const day = Math.floor(Math.random() * 28) + 1;
+  const monthIndex = Math.floor(Math.random() * 12);
+  const year = new Date().getFullYear(); // or customize as needed
+
+  return new Date(year, monthIndex, day);
+}
+/*function parseShortDateString(dateStr: string): Date {
+  const [day, monthStr] = dateStr.split(" ");
+  const monthIndex = [
+    "JAN",
+    "FEB",
+    "MAR",
+    "APR",
+    "MAY",
+    "JUN",
+    "JUL",
+    "AUG",
+    "SEP",
+    "OCT",
+    "NOV",
+    "DEC",
+  ].indexOf(monthStr.toUpperCase());
+
+  const year = new Date().getFullYear();
+
+  return new Date(year, monthIndex, parseInt(day, 10));
+}*/
+function formatShortDate(date: Date): string {
   const months = [
     "JAN",
     "FEB",
@@ -45,35 +75,38 @@ function getRandomDateShort() {
     "NOV",
     "DEC",
   ];
-
-  const day = Math.floor(Math.random() * 28) + 1; // Keep it safe for all months
-  const monthIndex = Math.floor(Math.random() * 12);
-
-  return `${day.toString().padStart(2, "0")} ${months[monthIndex]}`;
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = months[date.getMonth()];
+  return `${day} ${month}`;
 }
 
 const generateRandomData = () => ({
-  boughtDate: getRandomDateShort(),
-  auctionLot: `${
-    auctions[Math.floor(Math.random() * auctions.length)]
-  } / ${Math.floor(Math.random() * 10000)}`,
+  boughtDate: getRandomDate(),
+  auction: `${auctions[Math.floor(Math.random() * auctions.length)]}`,
+  lot: `${Math.floor(Math.random() * 10000)} / ${Math.floor(
+    Math.random() * 10000
+  )}`,
   customer: customers[Math.floor(Math.random() * customers.length)],
-  region: regions[Math.floor(Math.random() * regions.length)],
+  region: regions[Math.floor(Math.random() * regions.length + 1)],
   make: carMakes[Math.floor(Math.random() * carMakes.length)],
   model: carModels[Math.floor(Math.random() * carModels.length)],
   chassis: chassisNumbers[Math.floor(Math.random() * chassisNumbers.length)],
   cc: `${Math.floor(Math.random() * 3000)}`,
-  fax: Math.random() < 0.5 ? "Sent" : "-",
-  sentDate: getRandomDateShort(),
-  pDate: getRandomDateShort(),
-  originalDate: getRandomDateShort(),
-  changeToDate: getRandomDateShort(),
-  exportDate: getRandomDateShort(),
-  month: `${Math.floor(Math.random() * 12) + 1}月`,
+  fax: faxLabels[Math.floor(Math.random() * faxLabels.length + 1)],
+  sentDate: getRandomDate(),
+  pDate: getRandomDate(),
+  original: faxLabels[Math.floor(Math.random() * faxLabels.length + 1)],
+  originalDate: getRandomDate(),
+  changeToDate: getRandomDate(),
+  exportDate: getRandomDate(),
+  month: getRandomDate(),
   vehicleFormat: `${Math.floor(Math.random() * 1000)} x ${Math.floor(
     Math.random() * 1000
   )} x ${Math.floor(Math.random() * 1000)}`,
-  weight: `${Math.floor(Math.random() * 2000)}kg`,
+  vehicleLength: `${Math.floor(Math.random() * 1000)}`,
+  vehicleWidth: `${Math.floor(Math.random() * 1000)}`,
+  vehicleHeight: `${Math.floor(Math.random() * 1000)}`,
+  weight: `${Math.floor(Math.random() * 2000)}`,
   locked: Math.random() < 0.5,
   tdn: `${Math.floor(Math.random() * 10000)}`,
   regKm: `${Math.floor(Math.random() * 1000000).toLocaleString()}`,
@@ -88,9 +121,38 @@ const generateRandomData = () => ({
   etdPort: "HAK",
 });
 
+function formatDateWithEra(date: Date): string {
+  if (!date || isNaN(date.getTime())) return "Invalid Date";
+
+  const year = date.getFullYear();
+  const month = date.toLocaleString("en-US", { month: "short" });
+
+  let era = "";
+
+  const reiwaStart = new Date("2019-05-01");
+  const heiseiStart = new Date("1989-01-08");
+
+  if (date >= reiwaStart) {
+    const reiwaYear = year - 2018; // Reiwa 1 is 2019
+    era = `(令和${reiwaYear === 1 ? "元" : reiwaYear}年)`;
+  } else if (date >= heiseiStart) {
+    const heiseiYear = year - 1988; // Heisei 1 is 1989
+    era = `(平成${heiseiYear}年)`;
+  }
+
+  return `${year}\n${era || "-"}\n${month}`;
+}
+
 type PapersTableRowData = {
-  boughtDate: string;
-  auctionLot: string;
+  boughtDate: Date;
+  sentDate: Date;
+  pDate: Date;
+  originalDate: Date;
+  changeToDate: Date;
+  exportDate: Date;
+  // The rest stays the same
+  auction: string;
+  lot: string;
   customer: string;
   region: string;
   make: string;
@@ -98,13 +160,12 @@ type PapersTableRowData = {
   chassis: string;
   cc: string;
   fax: string;
-  sentDate: string;
-  pDate: string;
-  originalDate: string;
-  changeToDate: string;
-  exportDate: string;
-  month: string;
+  original: string;
+  month: Date;
   vehicleFormat: string;
+  vehicleLength: string;
+  vehicleWidth: string;
+  vehicleHeight: string;
   weight: string;
   locked: boolean;
   tdn: string;
@@ -129,22 +190,26 @@ function PapersTableRow({
   tableColStyle,
 }: PapersTableRowProps) {
   // States for all your data columns, initialized from props
-  const [boughtDate, setBoughtDate] = useState(initialData.boughtDate);
-  const [auctionLot, setAuctionLot] = useState(initialData.auctionLot);
-  const [customer, setCustomer] = useState(initialData.customer);
-  const [region, setRegion] = useState(initialData.region);
-  const [make, setMake] = useState(initialData.make);
-  const [model, setModel] = useState(initialData.model);
+  const [boughtDate] = useState(initialData.boughtDate);
+  const [auction] = useState(initialData.auction);
+  const [lot] = useState(initialData.lot);
+  const [customer] = useState(initialData.customer);
+  const [region] = useState(initialData.region);
+  const [make] = useState(initialData.make);
+  const [model] = useState(initialData.model);
   const [chassis, setChassis] = useState(initialData.chassis);
   const [cc, setCc] = useState(initialData.cc);
   const [fax, setFax] = useState(initialData.fax);
-  const [sentDate, setSentDate] = useState(initialData.sentDate);
+  const [sentDate, setSentDate] = useState<Date>(initialData.sentDate);
   const [pDate, setPDate] = useState(initialData.pDate);
+  const [original, setOriginal] = useState(initialData.original);
   const [originalDate, setOriginalDate] = useState(initialData.originalDate);
   const [changeToDate, setChangeToDate] = useState(initialData.changeToDate);
   const [exportDate, setExportDate] = useState(initialData.exportDate);
-  const [month, setMonth] = useState(initialData.month);
-  const [vehicleFormat, setVehicleFormat] = useState(initialData.vehicleFormat);
+  const [month, setMonth] = useState<Date>(initialData.month);
+  const [vehicleLength, setVehicleLength] = useState(initialData.vehicleLength);
+  const [vehicleWidth, setVehicleWidth] = useState(initialData.vehicleWidth);
+  const [vehicleHeight, setVehicleHeight] = useState(initialData.vehicleHeight);
   const [weight, setWeight] = useState(initialData.weight);
   const [locked, setLocked] = useState(initialData.locked);
   const [tdn, setTdn] = useState(initialData.tdn);
@@ -157,6 +222,8 @@ function PapersTableRow({
   const [etdPort, setEtdPort] = useState(initialData.etdPort);
 
   const [isEditing, setIsEditing] = useState(false);
+
+  const [vehicleFormatCheck, setVehicleFormatCheck] = useState(false);
 
   // Helper to render input or text based on edit mode
   const renderCell = <T extends string>(
@@ -200,62 +267,249 @@ function PapersTableRow({
             onClick={() => setIsEditing(!isEditing)}
             aria-label={isEditing ? "Save row data" : "Edit row data"}
           >
-            {isEditing ? "Save" : <BiEdit size={16}/>}
+            {isEditing ? "Save" : <BiEdit size={16} />}
           </button>
         </div>
       </td>
 
-      <td className={`${tableColStyle}`}>
-        {renderCell(boughtDate, setBoughtDate)}
+      <td className={`${tableColStyle} text-nowrap`}>
+        {formatShortDate(boughtDate)}
       </td>
 
       <td className={`${tableColStyle}`}>
-        {renderCell(auctionLot, setAuctionLot)}
+        <p className=" text-black">{auction}</p>
+        <p className=" text-gray-500">{lot}</p>
       </td>
 
       <td className={`${tableColStyle}`}>
-        {renderCell(customer, setCustomer)}
-        {renderCell(region, setRegion)}
+        <p className=" text-black">{customer}</p>
+        <p className=" text-gray-500">{region}</p>
       </td>
 
       <td className={`${tableColStyle}`}>
-        {renderCell(make, setMake)}
-        {renderCell(model, setModel)}
+        <p className=" text-black">{make}</p>
+        <p className=" text-gray-500">{model}</p>
       </td>
 
       <td className={`${tableColStyle}`}>{renderCell(chassis, setChassis)}</td>
 
-      <td className={`${tableColStyle}`}>{renderCell(cc, setCc)}</td>
-
-      <td className={`${tableColStyle}`}>{renderCell(fax, setFax)}</td>
-
       <td className={`${tableColStyle}`}>
-        {renderCell(sentDate, setSentDate)}
-      </td>
-
-      <td className={`${tableColStyle}`}>{renderCell(pDate, setPDate)}</td>
-
-      <td className={`${tableColStyle}`}>
-        {renderCell(originalDate, setOriginalDate)}
+        <p className=" text-black">{renderCell(cc, setCc)}</p>
+        <p className=" text-gray-500">p</p>
       </td>
 
       <td className={`${tableColStyle}`}>
-        {renderCell(changeToDate, setChangeToDate)}
+        {isEditing ? (
+          <Dropdown
+            value={fax}
+            onChange={(e) => setFax(e.value)}
+            options={faxLabels}
+            optionLabel="Fax"
+            placeholder="-"
+            className="w-full custom-dropdown text-sm"
+          />
+        ) : (
+          <p>{fax}</p>
+        )}
       </td>
 
       <td className={`${tableColStyle}`}>
-        {renderCell(exportDate, setExportDate)}
+        {isEditing ? (
+          <Calendar
+            value={sentDate}
+            onChange={(e) => {
+              if (e.value) setSentDate(e.value);
+            }}
+            className="custom-calendar"
+            pt={{
+              root: { className: "text-xs p-0 w-full min-w-16" },
+              input: {
+                className: "text-xs px-0 py-0 rounded border border-gray-300",
+              },
+              panel: { className: "text-sm" },
+            }}
+          />
+        ) : (
+          <p>{formatShortDate(sentDate)}</p>
+        )}
       </td>
-
-      <td className={`${tableColStyle}`}>{renderCell(month, setMonth)}</td>
 
       <td className={`${tableColStyle}`}>
-        {renderCell(vehicleFormat, setVehicleFormat)}
+        {isEditing ? (
+          <Calendar
+            value={pDate}
+            onChange={(e) => {
+              if (e.value) setPDate(e.value);
+            }}
+            className="custom-calendar"
+            pt={{
+              root: { className: "text-xs p-0 w-full min-w-16" },
+              input: {
+                className: "text-xs px-0 py-0 rounded border border-gray-300",
+              },
+              panel: { className: "text-sm" },
+            }}
+          />
+        ) : (
+          <p>{formatShortDate(pDate)}</p>
+        )}
       </td>
 
-      <td className={`${tableColStyle}`}>{renderCell(weight, setWeight)}</td>
+      <td className={`${tableColStyle}`}>
+        {isEditing ? (
+          <Dropdown
+            value={original}
+            onChange={(e) => setOriginal(e.value)}
+            options={faxLabels}
+            optionLabel="Fax"
+            placeholder="-"
+            className="w-full custom-dropdown text-sm"
+          />
+        ) : (
+          <p>{original}</p>
+        )}
+        <p className="pt-1">
+          {isEditing ? (
+            <Calendar
+              value={originalDate}
+              onChange={(e) => {
+                if (e.value) setOriginalDate(e.value);
+              }}
+              className="custom-calendar"
+              pt={{
+                root: { className: "text-xs p-0 w-full min-w-16" },
+                input: {
+                  className: "text-xs px-0 py-0 rounded border border-gray-300",
+                },
+                panel: { className: "text-sm" },
+              }}
+            />
+          ) : (
+            <p>{formatShortDate(originalDate)}</p>
+          )}
+        </p>
+        {isEditing && <input type="file" className="custom-file-input" />}
+      </td>
 
-      <td className={`${tableColStyle} text-center`}>{renderLocked()}</td>
+      <td className={`${tableColStyle}`}>
+        {isEditing ? (
+          <Calendar
+            value={changeToDate}
+            onChange={(e) => {
+              if (e.value) setChangeToDate(e.value);
+            }}
+            className="custom-calendar"
+            pt={{
+              root: { className: "text-xs p-0 w-full min-w-16" },
+              input: {
+                className: "text-xs px-0 py-0 rounded border border-gray-300",
+              },
+              panel: { className: "text-sm" },
+            }}
+          />
+        ) : (
+          <p>{formatShortDate(changeToDate)}</p>
+        )}
+      </td>
+
+      <td className={`${tableColStyle}`}>
+        {isEditing ? (
+          <Calendar
+            value={exportDate}
+            onChange={(e) => {
+              if (e.value) setExportDate(e.value);
+            }}
+            className="custom-calendar"
+            pt={{
+              root: { className: "text-xs p-0 w-full min-w-16" },
+              input: {
+                className: "text-xs px-0 py-0 rounded border border-gray-300",
+              },
+              panel: { className: "text-sm" },
+            }}
+          />
+        ) : (
+          <p>{formatShortDate(exportDate)}</p>
+        )}
+      </td>
+
+      <td className={`${tableColStyle}`}>
+        {isEditing ? (
+          <Calendar
+            value={month}
+            onChange={(e) => {
+              if (e.value instanceof Date) setMonth(e.value);
+            }}
+            dateFormat="dd M yy"
+            className="custom-calendar"
+            pt={{
+              root: { className: "text-xs p-0 w-full min-w-16" },
+              input: {
+                className: "text-xs px-0 py-0 rounded border border-gray-300",
+              },
+              panel: { className: "text-sm" },
+            }}
+          />
+        ) : (
+          <div className="whitespace-pre-line text-sm p-1">
+            {formatDateWithEra(month)}
+          </div>
+        )}
+      </td>
+
+      <td className={`${tableColStyle}`}>
+        <div className="grid grid-cols-2 gap-1">
+          <p>
+            {isEditing ? (
+              <input
+                type="text"
+                value={vehicleLength}
+                onChange={(e) => setVehicleLength(e.target.value)}
+                className="border w-full py-0.5 rounded border-gray-200 bg-white"
+              />
+            ) : (
+              <p className="text-nowrap">{vehicleLength} x</p>
+            )}
+          </p>
+          <p>
+            {isEditing ? (
+              <input
+                type="text"
+                value={vehicleWidth}
+                onChange={(e) => setVehicleWidth(e.target.value)}
+                className="border w-full py-0.5 rounded border-gray-200 bg-white"
+              />
+            ) : (
+              <p className="text-nowrap">{vehicleWidth}</p>
+            )}
+          </p>
+          <p>
+            {isEditing ? (
+              <input
+                type="text"
+                value={vehicleHeight}
+                onChange={(e) => setVehicleHeight(e.target.value)}
+                className="border w-full py-0.5 rounded border-gray-200 bg-white"
+              />
+            ) : (
+              <p className="text-nowrap">x {vehicleHeight}</p>
+            )}
+          </p>
+          {isEditing && (
+            <Checkbox
+              onChange={(e) => setVehicleFormatCheck(e.checked ?? false)}
+              checked={vehicleFormatCheck}
+            ></Checkbox>
+          )}
+        </div>
+      </td>
+
+      <td className={`${tableColStyle}`}>
+        <p className=" text-black">{renderCell(weight, setWeight)}</p>
+        <p className=" text-gray-500">kg</p>
+      </td>
+
+      <td className={`${tableColStyle} text-center`}><div className="flex items-center justify-center">{renderLocked()}</div></td>
 
       <td className={`${tableColStyle}`}>{renderCell(tdn, setTdn)}</td>
 
@@ -594,7 +848,7 @@ function Papers() {
                 key={i}
                 index={i + 1}
                 initialData={generateRandomData()}
-                tableColStyle="px-2 py-1 text-sm" // example style, use your actual class
+                tableColStyle={tableColStyle}
               />
             ))}
           </tbody>

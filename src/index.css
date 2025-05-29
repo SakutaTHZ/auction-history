@@ -44,6 +44,27 @@
   .p-dropdown-label,.p-multiselect-label  {
   padding-top: 0.25rem;
   padding-bottom: 0.25rem;
+  font-size: x-small;
 }
   border-radius: 0.375rem !important;
+}
+
+.custom-calendar{
+  .p-inputtext{
+    font-size: small;
+    padding: 1px;
+  }
+}
+
+.custom-file-input {
+  font-size: 0; /* hides filename text */
+}
+
+.custom-file-input::file-selector-button {
+  font-size: 12px;
+  margin-top: 2px;
+  padding: 1px 4px;
+  background-color: #f1f1f1;
+  border: 1px solid #ccc;
+  cursor: pointer;
 }

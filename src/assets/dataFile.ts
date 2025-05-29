@@ -607,3 +607,15 @@ export const chassisNumbers: string[] = [
   "W0L0XCE7571123456"  // Opel/Vauxhall
 ];
 
+export const faxLabels = [
+  "",
+  "抹",
+  "検",
+  "輸出予定",
+  "仮抹消",
+  "一時抹消",
+  "登録",
+  "輸出抹消",
+  "転送済み",
+  "書類なし",
+];
