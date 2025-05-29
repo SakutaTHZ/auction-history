@@ -33,7 +33,7 @@ const CNetAdminNav: React.FC<CNetAdminNavProps> = ({
   return (
     <nav className="sticky top-0 z-[11] w-full bg-white">
       <div
-        className={`flex flex-col md:flex-row items-center justify-between w-full min-h-16 bg-[#F8F5EF] px-10 py-3 ${customClass}`}
+        className={`flex flex-col md:flex-row items-center justify-between w-full min-h-16 bg-[#F8F5EF] h-16 px-10 py-3 ${customClass}`}
       >
         {/* Logo and Nav links */}
         <div className="flex items-center justify-between md:justify-normal w-full md:w-auto">

@@ -1,6 +1,6 @@
 import CNetAdminNav from "../../components/AdminNav/CNetAdminNav";
 import cosmoLogo from "../../assets/CosmoLogo.svg";
-import { BiCar, BiDownload, BiEdit, BiMenu } from "react-icons/bi";
+import { BiCar, BiDownload, BiEdit, BiMenu, BiSave } from "react-icons/bi";
 import { BsClock } from "react-icons/bs";
 import { CgCheckR, CgProfile } from "react-icons/cg";
 import { Dropdown } from "primereact/dropdown";
@@ -19,9 +19,10 @@ import {
 import { Checkbox } from "primereact/checkbox";
 import { MultiSelect } from "primereact/multiselect";
 import { Calendar } from "primereact/calendar";
+import { GiCancel } from "react-icons/gi";
 
 const subHamburgerStyle = "text-nowrap p-2 h-full hover:bg-amber-100 text-base";
-const tableColStyle = `px-1 py-2 text-gray-700 border-e border-gray-100 text-left text-sm`;
+const tableColStyle = `px-1 py-2 text-gray-700 border-e border-gray-100 text-left text-sm align-top`;
 
 const viewOptions: string[] = ["Papers", "OCR"];
 const exportOptions: string[] = ["Papers", "To JFA"];
@@ -114,6 +115,7 @@ const generateRandomData = () => ({
     Math.random() < 0.5 ? "メンテ、取、Rキー>>Sent to yard(2025/02/27)" : "",
   comment: Math.random() < 0.5 ? "★抹消ストップ★" : "",
   transporter: "JFA",
+  ety: getRandomDate(),
   etyYard: yardname[Math.floor(Math.random() * yardname.length)],
   vessel: (
     vessels[Math.floor(Math.random() * vessels.length)].split("]").pop() ?? ""
@@ -150,7 +152,6 @@ type PapersTableRowData = {
   originalDate: Date;
   changeToDate: Date;
   exportDate: Date;
-  // The rest stays the same
   auction: string;
   lot: string;
   customer: string;
@@ -174,6 +175,7 @@ type PapersTableRowData = {
   comment: string;
   transporter: string;
   etyYard: string;
+  ety: Date;
   vessel: string;
   etdPort: string;
 };
@@ -190,13 +192,14 @@ function PapersTableRow({
   tableColStyle,
 }: PapersTableRowProps) {
   // States for all your data columns, initialized from props
+  const [locked, setLocked] = useState(initialData.locked);
   const [boughtDate] = useState(initialData.boughtDate);
-  const [auction] = useState(initialData.auction);
-  const [lot] = useState(initialData.lot);
-  const [customer] = useState(initialData.customer);
-  const [region] = useState(initialData.region);
-  const [make] = useState(initialData.make);
-  const [model] = useState(initialData.model);
+  const [auction, setAuction] = useState(initialData.auction);
+  const [lot, setLot] = useState(initialData.lot);
+  const [customer, setCustomer] = useState(initialData.customer);
+  const [region, setRegion] = useState(initialData.region);
+  const [make, setMake] = useState(initialData.make);
+  const [model, setModel] = useState(initialData.model);
   const [chassis, setChassis] = useState(initialData.chassis);
   const [cc, setCc] = useState(initialData.cc);
   const [fax, setFax] = useState(initialData.fax);
@@ -211,12 +214,12 @@ function PapersTableRow({
   const [vehicleWidth, setVehicleWidth] = useState(initialData.vehicleWidth);
   const [vehicleHeight, setVehicleHeight] = useState(initialData.vehicleHeight);
   const [weight, setWeight] = useState(initialData.weight);
-  const [locked, setLocked] = useState(initialData.locked);
   const [tdn, setTdn] = useState(initialData.tdn);
   const [regKm, setRegKm] = useState(initialData.regKm);
   const [accessories, setAccessories] = useState(initialData.accessories);
   const [comment, setComment] = useState(initialData.comment);
   const [transporter, setTransporter] = useState(initialData.transporter);
+  const [ety, setEty] = useState<Date>(initialData.ety);
   const [etyYard, setEtyYard] = useState(initialData.etyYard);
   const [vessel, setVessel] = useState(initialData.vessel);
   const [etdPort, setEtdPort] = useState(initialData.etdPort);
@@ -225,10 +228,46 @@ function PapersTableRow({
 
   const [vehicleFormatCheck, setVehicleFormatCheck] = useState(false);
 
+  const resetAllData = () => {
+    setLocked(initialData.locked);
+    setChassis(initialData.chassis);
+    setCc(initialData.cc);
+    setFax(initialData.fax);
+    setSentDate(initialData.sentDate);
+    setPDate(initialData.pDate);
+    setOriginal(initialData.original);
+    setOriginalDate(initialData.originalDate);
+    setChangeToDate(initialData.changeToDate);
+    setExportDate(initialData.exportDate);
+    setMonth(initialData.month);
+    setVehicleLength(initialData.vehicleLength);
+    setVehicleWidth(initialData.vehicleWidth);
+    setVehicleHeight(initialData.vehicleHeight);
+    setWeight(initialData.weight);
+    setTdn(initialData.tdn);
+    setRegKm(initialData.regKm);
+    setAccessories(initialData.accessories);
+    setComment(initialData.comment);
+    setEty(initialData.ety);
+
+    // Assuming you add setters for these too
+    setAuction(initialData.auction);
+    setLot(initialData.lot);
+    setCustomer(initialData.customer);
+    setRegion(initialData.region);
+    setMake(initialData.make);
+    setModel(initialData.model);
+    setTransporter(initialData.transporter);
+    setEtyYard(initialData.etyYard);
+    setVessel(initialData.vessel);
+    setEtdPort(initialData.etdPort);
+  };
+
   // Helper to render input or text based on edit mode
   const renderCell = <T extends string>(
     value: T,
     setValue: React.Dispatch<React.SetStateAction<T>>,
+    locked: boolean,
     inputProps = {}
   ) =>
     isEditing ? (
@@ -236,7 +275,8 @@ function PapersTableRow({
         type="text"
         value={value}
         onChange={(e) => setValue(e.target.value as T)}
-        className="border w-full py-0.5 rounded border-gray-200 bg-white"
+        className="border w-full py-0.5 rounded border-gray-200 bg-white disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed"
+        disabled={locked}
         {...inputProps}
       />
     ) : (
@@ -258,17 +298,41 @@ function PapersTableRow({
     );
 
   return (
-    <tr className="border-b border-gray-200 even:bg-gray-50 hover:bg-[#F8F4ED80]">
+    <tr
+      className={`  transition-colors ${
+        isEditing
+          ? "bg-yellow-100 border-2 border-dotted border-amber-200"
+          : "border-b border-gray-200 hover:bg-gray-100 even:bg-gray-50"
+      }`}
+    >
       <td className={`${tableColStyle} text-center`}>
         <div className="flex flex-col items-center justify-center gap-2">
           {index}
           <button
-            className="text-gray-600 hover:text-blue-800 font-semibold"
+            className="text-gray-600 hover:text-blue-800 font-semibold cursor-pointer"
             onClick={() => setIsEditing(!isEditing)}
             aria-label={isEditing ? "Save row data" : "Edit row data"}
           >
-            {isEditing ? "Save" : <BiEdit size={16} />}
+            {isEditing ? (
+              <div className="flex justify-center items-center flex-col gap-2">
+                <BiSave size={18} className="text-green-600" />
+              </div>
+            ) : (
+              <BiEdit size={18} />
+            )}
           </button>
+          {isEditing && (
+            <button
+              className="text-gray-600 hover:text-blue-800 font-semibold cursor-pointer"
+              onClick={() => {
+                resetAllData();
+                setIsEditing(!isEditing);
+              }}
+              aria-label={isEditing ? "Save row data" : "Edit row data"}
+            >
+              <GiCancel size={16} className="text-red-600" />
+            </button>
+          )}
         </div>
       </td>
 
@@ -291,10 +355,12 @@ function PapersTableRow({
         <p className=" text-gray-500">{model}</p>
       </td>
 
-      <td className={`${tableColStyle}`}>{renderCell(chassis, setChassis)}</td>
+      <td className={`${tableColStyle}`}>
+        {renderCell(chassis, setChassis, locked)}
+      </td>
 
       <td className={`${tableColStyle}`}>
-        <p className=" text-black">{renderCell(cc, setCc)}</p>
+        <p className=" text-black">{renderCell(cc, setCc, locked)}</p>
         <p className=" text-gray-500">p</p>
       </td>
 
@@ -306,7 +372,7 @@ function PapersTableRow({
             options={faxLabels}
             optionLabel="Fax"
             placeholder="-"
-            className="w-full custom-dropdown text-sm"
+            className="w-full fax-dropdown text-sm"
           />
         ) : (
           <p>{fax}</p>
@@ -330,7 +396,7 @@ function PapersTableRow({
             }}
           />
         ) : (
-          <p>{formatShortDate(sentDate)}</p>
+          <p className="text-nowrap">{formatShortDate(sentDate)}</p>
         )}
       </td>
 
@@ -351,7 +417,7 @@ function PapersTableRow({
             }}
           />
         ) : (
-          <p>{formatShortDate(pDate)}</p>
+          <p className="text-nowrap">{formatShortDate(pDate)}</p>
         )}
       </td>
 
@@ -363,7 +429,7 @@ function PapersTableRow({
             options={faxLabels}
             optionLabel="Fax"
             placeholder="-"
-            className="w-full custom-dropdown text-sm"
+            className="w-full fax-dropdown text-sm"
           />
         ) : (
           <p>{original}</p>
@@ -441,17 +507,19 @@ function PapersTableRow({
               if (e.value instanceof Date) setMonth(e.value);
             }}
             dateFormat="dd M yy"
-            className="custom-calendar"
+            className="custom-calendar disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed"
             pt={{
               root: { className: "text-xs p-0 w-full min-w-16" },
               input: {
-                className: "text-xs px-0 py-0 rounded border border-gray-300",
+                className:
+                  "text-xs px-0 py-0 rounded border border-gray-300 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed",
               },
               panel: { className: "text-sm" },
             }}
+            disabled={locked}
           />
         ) : (
-          <div className="whitespace-pre-line text-sm p-1">
+          <div className="whitespace-pre-line text-sm">
             {formatDateWithEra(month)}
           </div>
         )}
@@ -505,31 +573,76 @@ function PapersTableRow({
       </td>
 
       <td className={`${tableColStyle}`}>
-        <p className=" text-black">{renderCell(weight, setWeight)}</p>
+        <p className=" text-black">{renderCell(weight, setWeight, locked)}</p>
         <p className=" text-gray-500">kg</p>
       </td>
 
-      <td className={`${tableColStyle} text-center`}><div className="flex items-center justify-center">{renderLocked()}</div></td>
-
-      <td className={`${tableColStyle}`}>{renderCell(tdn, setTdn)}</td>
-
-      <td className={`${tableColStyle}`}>{renderCell(regKm, setRegKm)}</td>
-
-      <td className={`${tableColStyle}`}>
-        {renderCell(accessories, setAccessories)}
+      <td className={`${tableColStyle} text-center`}>
+        <div className="flex items-center justify-center">{renderLocked()}</div>
       </td>
 
-      <td className={`${tableColStyle}`}>{renderCell(comment, setComment)}</td>
+      <td className={`${tableColStyle}`}>{renderCell(tdn, setTdn, locked)}</td>
 
       <td className={`${tableColStyle}`}>
-        {renderCell(transporter, setTransporter)}
+        <p className=" text-black">{renderCell(regKm, setRegKm, locked)}</p>
+        <p className=" text-gray-500">km</p>
       </td>
 
-      <td className={`${tableColStyle}`}>{renderCell(etyYard, setEtyYard)}</td>
+      <td className={`${tableColStyle} min-w-24 w-24`}>
+        {isEditing ? (
+          <textarea
+            rows={4}
+            value={accessories}
+            onChange={(e) => setAccessories(e.target.value)}
+            className="border w-full py-0.5 rounded border-gray-200 bg-white disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed"
+          />
+        ) : (
+          <p>{accessories}</p>
+        )}
+      </td>
 
-      <td className={`${tableColStyle}`}>{renderCell(vessel, setVessel)}</td>
+      <td className={`${tableColStyle} min-w-24 w-24`}>
+        {isEditing ? (
+          <textarea
+            rows={4}
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
+            className="border w-full py-0.5 rounded border-gray-200 bg-white disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed"
+          />
+        ) : (
+          <p>{comment}</p>
+        )}
+      </td>
 
-      <td className={`${tableColStyle}`}>{renderCell(etdPort, setEtdPort)}</td>
+      <td className={`${tableColStyle}`}>
+        <p className=" text-black">{transporter}</p>
+      </td>
+
+      <td className={`${tableColStyle}`}>
+        {isEditing ? (
+          <Calendar
+            value={ety}
+            onChange={(e) => {
+              if (e.value) setEty(e.value);
+            }}
+            className="custom-calendar"
+            pt={{
+              root: { className: "text-xs p-0 w-full min-w-16" },
+              input: {
+                className: "text-xs px-0 py-0 rounded border border-gray-300",
+              },
+              panel: { className: "text-sm" },
+            }}
+          />
+        ) : (
+          <p>{formatShortDate(ety)}</p>
+        )}
+        <p className=" text-black">{etyYard}</p>
+      </td>
+
+      <td className={`${tableColStyle}`}>{vessel}</td>
+
+      <td className={`${tableColStyle}`}>{etdPort}</td>
     </tr>
   );
 }
@@ -767,10 +880,10 @@ function Papers() {
       </div>
 
       {/* Table */}
-      <div className="tableContainer w-full overflow-auto">
+      <div className="tableContainer w-full max-h-[calc(100vh-4rem)] overflow-auto">
         <table className="w-full text-sm">
-          <thead>
-            <tr className="bg-[#F8F4ED]">
+          <thead className="sticky top-0 bg-[#F8F4ED] z-10">
+            <tr className="bg-[#F8F4ED] h-16">
               <th className={`font-semibold ${tableColStyle}`}>#</th>
               <th className={`font-semibold ${tableColStyle}`}>
                 Bought

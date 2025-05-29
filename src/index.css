@@ -44,6 +44,14 @@
   .p-dropdown-label,.p-multiselect-label  {
   padding-top: 0.25rem;
   padding-bottom: 0.25rem;
+}
+  border-radius: 0.375rem !important;
+}
+
+.fax-dropdown {
+  .p-dropdown-label,.p-multiselect-label  {
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
   font-size: x-small;
 }
   border-radius: 0.375rem !important;
