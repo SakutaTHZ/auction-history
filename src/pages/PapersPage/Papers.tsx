@@ -74,48 +74,53 @@ export interface PaperData {
   etyYard: string;
   vessel: string;
   etdPort: string;
+  checkedBy?: string; // Optional field for OCR
+  detected?: number; // Optional field for OCR
+  checkedDate?: Date; // Optional field for OCR
+  checkedTime?: string; // Optional field for OCR
 }
 
 const generateRandomData = (): PaperData => ({
   boughtDate: getRandomDate(),
-  auction: `${auctions[Math.floor(Math.random() * auctions.length)]}`,
-  lot: `${Math.floor(Math.random() * 10000)} / ${Math.floor(
-    Math.random() * 10000
-  )}`,
+  auction: auctions[Math.floor(Math.random() * auctions.length)],
+  lot: `${Math.floor(Math.random() * 10000)} / ${Math.floor(Math.random() * 10000)}`,
   customer: customers[Math.floor(Math.random() * customers.length)],
-  region: regions[Math.floor(Math.random() * regions.length + 1)],
+  region: regions[Math.floor(Math.random() * regions.length)],
   make: carMakes[Math.floor(Math.random() * carMakes.length)],
   model: carModels[Math.floor(Math.random() * carModels.length)],
   chassis: chassisNumbers[Math.floor(Math.random() * chassisNumbers.length)],
   cc: `${Math.floor(Math.random() * 3000)}`,
-  fax: faxLabels[Math.floor(Math.random() * faxLabels.length + 1)],
+  fax: faxLabels[Math.floor(Math.random() * faxLabels.length)],
   sentDate: getRandomDate(),
   pDate: getRandomDate(),
-  original: faxLabels[Math.floor(Math.random() * faxLabels.length + 1)],
+  original: faxLabels[Math.floor(Math.random() * faxLabels.length)],
   originalDate: getRandomDate(),
   changeToDate: getRandomDate(),
   exportDate: getRandomDate(),
   month: getRandomDate(),
-  vehicleFormat: `${Math.floor(Math.random() * 1000)} x ${Math.floor(
-    Math.random() * 1000
-  )} x ${Math.floor(Math.random() * 1000)}`,
+  vehicleFormat: `${Math.floor(Math.random() * 1000)} x ${Math.floor(Math.random() * 1000)} x ${Math.floor(Math.random() * 1000)}`,
   vehicleLength: `${Math.floor(Math.random() * 1000)}`,
   vehicleWidth: `${Math.floor(Math.random() * 1000)}`,
   vehicleHeight: `${Math.floor(Math.random() * 1000)}`,
-  weight: `${Math.floor(Math.random() * 3000)}`, // Added weight property
+  weight: `${Math.floor(Math.random() * 3000)}`,
   locked: Math.random() < 0.5,
   tdn: `${Math.floor(Math.random() * 10000)}`,
   regKm: `${Math.floor(Math.random() * 1000000).toLocaleString()}`,
-  accessories:
-    Math.random() < 0.5 ? "メンテ、取、Rキー>>Sent to yard(2025/02/27)" : "",
+  accessories: Math.random() < 0.5 ? "メンテ、取、Rキー>>Sent to yard(2025/02/27)" : "",
   comment: Math.random() < 0.5 ? "★抹消ストップ★" : "",
   transporter: "JFA",
   ety: getRandomDate(),
   etyYard: yardname[Math.floor(Math.random() * yardname.length)],
-  vessel: (
-    vessels[Math.floor(Math.random() * vessels.length)].split("]").pop() ?? ""
-  ).trim(),
+  vessel: (vessels[Math.floor(Math.random() * vessels.length)].split("]").pop() ?? "").trim(),
   etdPort: "HAK",
+  checkedBy: Math.random() < 0.4 ? "CJP Mayumi" : "",
+  detected: Math.random() < 0.4 ? Math.floor(Math.random() * 20) + 1 : 0,
+  checkedDate: new Date(new Date().getTime() - Math.floor(Math.random() * 30 * 24 * 60 * 60 * 1000)),
+  checkedTime: new Date(new Date().getTime() - Math.floor(Math.random() * 30 * 24 * 60 * 60 * 1000)).toLocaleTimeString("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+  }),
 });
 
 function Papers() {
@@ -409,21 +414,21 @@ function Papers() {
                 <th className={`font-semibold ${tableColStyle} `}>
                   Chassis No.
                 </th>
-                <th className={`font-semibold ${tableColStyle} min-w-[150px]`}>ETD Port</th>
-                <th className={`font-semibold ${tableColStyle} min-w-[150px]`}>Vessel</th>
-                <th className={`font-semibold ${tableColStyle} min-w-[150px]`}>Detected</th>
-                <th className={`font-semibold ${tableColStyle} min-w-[150px]`}>Checked By</th>
-                <th className={`font-semibold ${tableColStyle} min-w-[150px]`}>TimeStamp</th>
+                <th className={`font-semibold ${tableColStyle} min-w-[150px]`}>
+                  ETD Port
+                </th>
+                <th className={`font-semibold ${tableColStyle} min-w-[150px]`}>
+                  Vessel
+                </th>
+                <th className={`font-semibold ${tableColStyle} min-w-[150px]`}>
+                  Detected
+                </th>
               </tr>
             </thead>
 
             <tbody>
               {papersData.map((data, i) => (
-                <OCRTableRow
-                  key={i}
-                  index={i + 1}
-                  data={data}
-                />
+                <OCRTableRow key={i} index={i + 1} data={data} />
               ))}
             </tbody>
           </table>
