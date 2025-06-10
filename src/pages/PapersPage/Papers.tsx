@@ -396,31 +396,31 @@ function Papers() {
             <thead className="sticky top-0 bg-[#F8F4ED] z-10">
               <tr className="bg-[#F8F4ED] h-16">
                 <th className={`font-semibold ${tableColStyle} px-2`}>#</th>
-                <th className={`font-semibold ${tableColStyle} min-w-[150px]`}>
+                <th className={`font-semibold ${tableColStyle} px-2 min-w-[150px]`}>
                   Bought
                   <br />
                   Date
                 </th>
-                <th className={`font-semibold ${tableColStyle} min-w-[150px]`}>
+                <th className={`font-semibold ${tableColStyle} px-2 min-w-[150px]`}>
                   Customer/
                   <br />
                   Region
                 </th>
-                <th className={`font-semibold ${tableColStyle} min-w-[150px]`}>
+                <th className={`font-semibold ${tableColStyle} px-2 min-w-[150px]`}>
                   Make/
                   <br />
                   Model
                 </th>
-                <th className={`font-semibold ${tableColStyle} `}>
+                <th className={`font-semibold ${tableColStyle} px-2 `}>
                   Chassis No.
                 </th>
-                <th className={`font-semibold ${tableColStyle} min-w-[150px]`}>
+                <th className={`font-semibold ${tableColStyle} px-2 min-w-[150px]`}>
                   ETD Port
                 </th>
-                <th className={`font-semibold ${tableColStyle} min-w-[150px]`}>
+                <th className={`font-semibold ${tableColStyle} px-2 min-w-[150px]`}>
                   Vessel
                 </th>
-                <th className={`font-semibold ${tableColStyle} min-w-[150px]`}>
+                <th className={`font-semibold ${tableColStyle} px-2 min-w-[150px]`}>
                   Detected
                 </th>
               </tr>
