@@ -40,7 +40,7 @@ const DetectedColumn = ({ detectedData }: { detectedData: PaperData }) => {
       <div className="flex items-center justify-center h-full gap-1">
         {(detectedData.detected ?? 0) === 0 ? (
           <IoCheckmarkCircleOutline size={16} />
-        ) : (detectedData.detected ?? 0) < 5 ? (
+        ) : (detectedData.detected ?? 0) < 10 ? (
           <IoInformationCircleOutline size={16} />
         ) : (
           <IoWarningOutline size={16} />
